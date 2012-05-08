@@ -1,0 +1,6 @@
+resolutionX=800
+resolutionY=600
+mapSizeX=512
+mapSizeY=256
+mapFile=out.txt
+imageListFile=imagelist.txt
