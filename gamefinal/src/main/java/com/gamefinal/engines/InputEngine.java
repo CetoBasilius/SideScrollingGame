@@ -1,20 +1,22 @@
 package com.gamefinal.engines;
 
+import java.awt.event.KeyEvent;
+
 import com.gamefinal.global.Global;
 
 public class InputEngine {
 	
 	public enum RecorderState { OFF, RECORDING, PLAYBACK }
 	
-	private static final int UP_KEY_CODE = 87;
-	private static final int DOWN_KEY_CODE = 83;
-	private static final int LEFT_KEY_CODE = 65;
-	private static final int RIGHT_KEY_CODE = 68;
+	private static final int UP_KEY_CODE = KeyEvent.VK_W;
+	private static final int DOWN_KEY_CODE = KeyEvent.VK_S;
+	private static final int LEFT_KEY_CODE = KeyEvent.VK_A;
+	private static final int RIGHT_KEY_CODE = KeyEvent.VK_D;
 	
-	private static final int ACTION_KEY_CODE = 69;
-	private static final int JUMP_KEY_CODE = 32;
-	private static final int FIRE_KEY_CODE = 96;
-	private static final int RELOAD_KEY_CODE = 82;
+	private static final int ACTION_KEY_CODE = KeyEvent.VK_E;
+	private static final int JUMP_KEY_CODE = KeyEvent.VK_SPACE;
+	private static final int FIRE_KEY_CODE = KeyEvent.VK_K;
+	private static final int RELOAD_KEY_CODE = KeyEvent.VK_R;
 
 	InputEngineController inputController = new InputEngineController();
 	InputRecorder inputRecorder = new InputRecorder();
@@ -22,8 +24,8 @@ public class InputEngine {
 	
 	public void update(){
 		//TODO remove this and record with command line or menu
-		if(inputRecorder.isFull()==false){inputRecorder.recorderState = RecorderState.RECORDING;}
-		else{inputRecorder.recorderState = RecorderState.PLAYBACK;}
+		//if(inputRecorder.isFull()==false){inputRecorder.recorderState = RecorderState.RECORDING;}
+		//else{inputRecorder.recorderState = RecorderState.PLAYBACK;}
 		
 		inputController = inputRecorder.update(inputController);
 		

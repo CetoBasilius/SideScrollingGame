@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.ImageObserver;
 
@@ -15,7 +16,7 @@ public class GraphicsEngine {
 	
 	private Boolean graphicsDebug = true;
 
-	private Graphics bufferGraphics;
+	private Graphics2D bufferGraphics;
 	private Image offScreen;
 	private ImageObserver observer;
 	
@@ -44,8 +45,9 @@ public class GraphicsEngine {
 		Component component = (Component) imageObserver;
 		component.setBackground(Color.black);
 		offScreen = component.createImage(resolutionX, resolutionY);
-		bufferGraphics = offScreen.getGraphics();
-
+		
+		bufferGraphics = (Graphics2D) offScreen.getGraphics();
+		
 		bufferGraphics.setFont(guiFont);
 		bufferGraphics.setColor(Color.white);
 

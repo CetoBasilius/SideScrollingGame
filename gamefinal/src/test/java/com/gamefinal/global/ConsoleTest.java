@@ -8,7 +8,7 @@ public class ConsoleTest {
 
 	@Test
 	public void testConsoleMessageAdd(){
-		Console console = new Console();
+		Console console = new Console(0,0,0,0);
 		
 		//Console messages must be empty
 		assertEquals("",console.getLine(0));
