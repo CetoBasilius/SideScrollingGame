@@ -2,19 +2,28 @@ package com.gamefinal.global;
 
 public class Console {
 	
-	private static final int MAX_MESSAGE_LENGHT = 24;
+	//private static final int MAX_MESSAGE_LENGHT = 24;
 	private static final int MAX_CONSOLE_LINES = 5;
 	private String consoleLines[] = new String[MAX_CONSOLE_LINES];
 	
-	private int positionX;
-	private int positionY;
+	private int messageLogPositionX;
+	private int messageLogPositionY;
 	
-	public Console(int x,int y){
+	private int inputPositionX;
+	private int inputPositionY;
+	
+	public Console(int logPositionX,int logPositionY,int inputX, int inputY){
 		for(int line=0;line<MAX_CONSOLE_LINES;line++){
 			consoleLines[line]="";
 		}
-		positionX = x;
-		positionY = y;
+		messageLogPositionX = logPositionX;
+		messageLogPositionY = logPositionY;
+		inputPositionX = inputX;
+		inputPositionY = inputY;
+	}
+	
+	public void update(){
+		
 	}
 
 	public void addMessage(String message){
@@ -35,20 +44,36 @@ public class Console {
 		return consoleLines[line];
 	}
 
-	public int getPositionX() {
-		return positionX;
+	public int getLogPositionX() {
+		return messageLogPositionX;
 	}
 
-	public void setPositionX(int positionX) {
-		this.positionX = positionX;
+	public void setLogPositionX(int positionX) {
+		this.messageLogPositionX = positionX;
 	}
 
-	public int getPositionY() {
-		return positionY;
+	public int getLogPositionY() {
+		return messageLogPositionY;
 	}
 
-	public void setPositionY(int positionY) {
-		this.positionY = positionY;
+	public void setLogPositionY(int positionY) {
+		this.messageLogPositionY = positionY;
+	}
+
+	public int getInputPositionY() {
+		return inputPositionY;
+	}
+
+	public void setInputPositionY(int inputPositionY) {
+		this.inputPositionY = inputPositionY;
+	}
+
+	public int getInputPositionX() {
+		return inputPositionX;
+	}
+
+	public void setInputPositionX(int inputPositionX) {
+		this.inputPositionX = inputPositionX;
 	}
 
 }
