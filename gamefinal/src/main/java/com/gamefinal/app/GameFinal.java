@@ -5,7 +5,6 @@ import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -15,8 +14,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferStrategy;
-
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,7 +26,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	private static final int WINDOW_THICKNESS_Y = 38;
 	private static final int DEFAULT_RESOLUTION_Y = 480;
 	private static final int DEFAULT_RESOLUTION_X = 640;
-	private static final int MAIN_THREAD_SLEEP = 0;
+	private static final int MAIN_THREAD_SLEEP = 33;
 	/**
 	 * 
 	 */
@@ -41,9 +38,9 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	private JPanel mainPanel;
 	
 	//TODO actually use this if using page flipping
-	@SuppressWarnings("unused")
-	private Graphics2D gameGraphics;
-	private BufferStrategy gameBufferStrategy;
+	//@SuppressWarnings("unused")
+	//private Graphics2D gameGraphics;
+	//private BufferStrategy gameBufferStrategy;
 
 	public GameFinal(){
 		init();
@@ -52,52 +49,61 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 	
 	private void init() {
-		
-		
-		mainFrame = new JFrame(""+serialVersionUID);
-		mainPanel = (JPanel) mainFrame.getContentPane();
-		mainPanel.setSize(new Dimension(DEFAULT_RESOLUTION_X,DEFAULT_RESOLUTION_Y));
-		mainPanel.setLayout(new FlowLayout());
-		setSize(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);
-		
-		mainPanel.add(this);	
-		//setIgnoreRepaint(true);
-		mainFrame.pack();
-		mainFrame.setVisible(true);
-		
-		
-		
-		mainFrame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-
+		buildWindow();
 		
 		Global.getGlobals().init(this);
 		int resolutionX=Global.getGlobals().getResolutionX();
 		int resolutionY=Global.getGlobals().getResolutionY();
 		Global.getGlobals().setDefaultImage(createImage(16,16));
 		
-		
-		mainFrame.setSize(new Dimension(resolutionX+WINDOW_THICKNESS_X,resolutionY+WINDOW_THICKNESS_Y));
-		mainPanel.setSize(new Dimension(resolutionX,resolutionY));
-		this.setSize(resolutionX, resolutionY);
+		prepareWindow(resolutionX, resolutionY);
+		addListeners();
 
-		mainFrame.setResizable(false);
+	}
 
-		requestFocus();
-		createBufferStrategy(2);
-		gameBufferStrategy = getBufferStrategy();
-		//TODO use this if necessary (Page flipping)
-		gameGraphics = (Graphics2D) gameBufferStrategy.getDrawGraphics();
 
+	private void addListeners() {
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		addMouseListener(this); 
 		addMouseWheelListener(this);
+	}
+
+
+	private void prepareWindow(int resolutionX, int resolutionY) {
+		mainFrame.setSize(new Dimension(resolutionX+WINDOW_THICKNESS_X,resolutionY+WINDOW_THICKNESS_Y));
+		mainPanel.setSize(new Dimension(resolutionX,resolutionY));
+		this.setSize(resolutionX, resolutionY);
+		mainFrame.setResizable(false);
+
+		requestFocus();
+		createBufferStrategy(2);
+		//gameBufferStrategy = getBufferStrategy();
+		//TODO use this if necessary (Page flipping)
+		//gameGraphics = (Graphics2D) this.getBufferStrategy().getDrawGraphics();
+	}
+
+
+	private void buildWindow() {
+		mainFrame = new JFrame(""+serialVersionUID);
 		
-		;
+		mainPanel = new JPanel();
+		mainPanel.setSize(new Dimension(DEFAULT_RESOLUTION_X,DEFAULT_RESOLUTION_Y));
+		mainPanel.setLayout(new FlowLayout());
+		
+		setSize(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);
+		
+		mainPanel.add(this);	
+		mainFrame.add(mainPanel);
+		this.setIgnoreRepaint(true);
+		mainFrame.pack();
+		mainFrame.setVisible(true);
+
+		mainFrame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
 	}
 
 	
@@ -130,6 +136,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 		
 		try {
 			while(true){
+				synchronized (this){
 				Global.getGlobals().inputEngine.update();
 				Global.getGlobals().graphicsEngine.measureFrames();
 				
@@ -137,7 +144,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 				if(Global.getGlobals().isLoadingDone()){
 					doGameLogic();
 				}
-				
+
 				if (mainThreadSuspended) {
 					synchronized (this) {
 						while (mainThreadSuspended) {
@@ -147,8 +154,10 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 				}
 					
 				
-				repaint();
+				
 				Thread.sleep(MAIN_THREAD_SLEEP);
+				repaint();
+				}
 			}
 		}
 		catch(Exception e)

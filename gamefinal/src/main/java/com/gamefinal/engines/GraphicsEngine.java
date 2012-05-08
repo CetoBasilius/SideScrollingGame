@@ -14,7 +14,7 @@ import com.gamefinal.global.Global;
 
 public class GraphicsEngine {
 	
-	private Boolean graphicsDebug = true;
+	private Boolean graphicsDebug = false;
 
 	private Graphics2D bufferGraphics;
 	private Image offScreen;
