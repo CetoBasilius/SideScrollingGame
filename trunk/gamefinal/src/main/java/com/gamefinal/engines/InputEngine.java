@@ -4,6 +4,8 @@ import com.gamefinal.global.Global;
 
 public class InputEngine {
 	
+	public enum RecorderState { OFF, RECORDING, PLAYBACK }
+	
 	private static final int UP_KEY_CODE = 87;
 	private static final int DOWN_KEY_CODE = 83;
 	private static final int LEFT_KEY_CODE = 65;
@@ -19,13 +21,13 @@ public class InputEngine {
 
 	
 	public void update(){
-		if(inputRecorder.isFull()==false){
-			inputRecorder.addMessage(inputController);
-		}
-		else
-		{
-			inputController = inputRecorder.replay();
-		}
+		//TODO remove this and record with command line or menu
+		if(inputRecorder.isFull()==false){inputRecorder.recorderState = RecorderState.RECORDING;}
+		else{inputRecorder.recorderState = RecorderState.PLAYBACK;}
+		
+		inputController = inputRecorder.update(inputController);
+		
+		
 		/*if(inputController.holdingUpKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraVertical(16);}
 		if(inputController.holdingDownKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraVertical(-16);}
 		if(inputController.holdingRightKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(16);}
@@ -221,6 +223,7 @@ public class InputEngine {
 			return true;
 		}
 		return false;
+		
 	}
 	
 	
@@ -229,6 +232,8 @@ public class InputEngine {
 		private int currentPlayBackPosition = 0;
 		private static final int MAX_RECORDED_COMMANDS = 400;
 		private InputEngineController inputRecord[] = new InputEngineController[MAX_RECORDED_COMMANDS];
+		public RecorderState recorderState = RecorderState.OFF;
+		
 		
 		public InputRecorder(){
 			for(int line=0;line<MAX_RECORDED_COMMANDS;line++){
@@ -236,7 +241,22 @@ public class InputEngine {
 			}
 		}
 
-		public InputEngineController replay() {
+		public InputEngineController update(InputEngineController inputControllerIn) {
+
+			if(recorderState==RecorderState.RECORDING){
+				this.addMessage(inputControllerIn);
+			}
+			else
+			{
+				if(recorderState==RecorderState.PLAYBACK){
+					return this.replay();
+				}
+			}
+
+			return inputControllerIn;
+		}
+
+		private InputEngineController replay() {
 			if(currentPlayBackPosition==MAX_RECORDED_COMMANDS){
 				//TODO reload everything.
 			}
@@ -252,7 +272,7 @@ public class InputEngine {
 			return recorderIsFull;
 		}
 
-		public void addMessage(InputEngineController message){
+		private void addMessage(InputEngineController message){
 			
 			for(int a = MAX_RECORDED_COMMANDS-1;a>0;a--){
 				inputRecord[a]=inputRecord[a-1];
@@ -267,6 +287,57 @@ public class InputEngine {
 
 		public int getCurrentSlot() {
 			return currentPlayBackPosition;
+		}
+	}
+	
+	public class InputEngineController implements Cloneable{
+		public boolean holdingUpKey;
+		public boolean holdingDownKey;
+		public boolean holdingLeftKey;
+		public boolean holdingRightKey;
+		public int upKeyTime;
+		public int downKeyTime;
+		public int leftKeyTime;
+		public int rightKeyTime;
+		public boolean holdingActionKey;
+		public boolean holdingJumpKey;
+		public boolean holdingFireKey;
+		public boolean holdingReloadKey;
+		public int actionKeyTime;
+		public int jumpKeyTime;
+		public int fireKeyTime;
+		public int reloadKeyTime;
+		
+		
+		@Override
+		public InputEngineController clone()
+		{
+			InputEngineController returnedClone=null;
+			try {
+				returnedClone = (InputEngineController) super.clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+			return returnedClone;	
+		} 
+
+		public InputEngineController() {
+			this.holdingUpKey = false;
+			this.holdingDownKey = false;
+			this.holdingLeftKey = false;
+			this.holdingRightKey = false;
+			this.upKeyTime = 0;
+			this.downKeyTime = 0;
+			this.leftKeyTime = 0;
+			this.rightKeyTime = 0;
+			this.holdingActionKey = false;
+			this.holdingJumpKey = false;
+			this.holdingFireKey = false;
+			this.holdingReloadKey = false;
+			this.actionKeyTime = 0;
+			this.jumpKeyTime = 0;
+			this.fireKeyTime = 0;
+			this.reloadKeyTime = 0;
 		}
 	}
 

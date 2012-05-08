@@ -11,6 +11,7 @@ public class CollisionEngineTest {
 	public void testObjectsCollide(){
 		CollisionEngine collisionEngine = new CollisionEngine();
 		
+		
 		GameObject object1 = new GameObject();
 		GameObject object2 = new GameObject();
 		

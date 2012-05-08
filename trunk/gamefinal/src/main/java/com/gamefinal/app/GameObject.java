@@ -13,6 +13,7 @@ public class GameObject {
 		
 		setSize(1,1);
 	}
+	
 
 	public void setSize(int sizeX,int sizeY) {
 		this.sizeX = sizeX;
