@@ -17,6 +17,8 @@ public class InputEngine {
 	private static final int JUMP_KEY_CODE = KeyEvent.VK_SPACE;
 	private static final int FIRE_KEY_CODE = KeyEvent.VK_K;
 	private static final int RELOAD_KEY_CODE = KeyEvent.VK_R;
+	
+	private static final int CHAT_KEY_CODE = KeyEvent.VK_ENTER;
 
 	InputEngineController inputController = new InputEngineController();
 	InputRecorder inputRecorder = new InputRecorder();
@@ -29,16 +31,17 @@ public class InputEngine {
 		
 		inputController = inputRecorder.update(inputController);
 		
-		
 		/*if(inputController.holdingUpKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraVertical(16);}
 		if(inputController.holdingDownKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraVertical(-16);}
 		if(inputController.holdingRightKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(16);}
 		if(inputController.holdingLeftKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(-16);}*/
 		
+		
 		if(inputController.holdingUpKey){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(1.0f);}
 		if(inputController.holdingDownKey){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(-1.0f);}
 		if(inputController.holdingRightKey){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(1.0f);}
 		if(inputController.holdingLeftKey){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(-1.0f);}
+
 	}
 	
 	public void pressKey(int keyCode){
@@ -81,6 +84,11 @@ public class InputEngine {
 		case RELOAD_KEY_CODE:{
 			inputController.holdingReloadKey=true;
 			inputController.reloadKeyTime++;
+			break;
+		}
+		case CHAT_KEY_CODE:{
+			inputController.holdingChatKey=true;
+			inputController.chatKeyTime++;
 			break;
 		}
 		
@@ -131,6 +139,11 @@ public class InputEngine {
 			inputController.reloadKeyTime=0;
 			break;
 		}
+		case CHAT_KEY_CODE:{
+			inputController.holdingChatKey=false;
+			inputController.chatKeyTime=0;
+			break;
+		}
 		
 		default:
 			break;
@@ -168,6 +181,10 @@ public class InputEngine {
 
 	public boolean isHoldingReloadKey() {
 		return inputController.holdingReloadKey;
+	}
+	
+	public boolean isHoldingChatKey() {
+		return inputController.holdingChatKey;
 	}
 	
 	//Pressed key
@@ -224,10 +241,15 @@ public class InputEngine {
 		if(inputController.reloadKeyTime==1){
 			return true;
 		}
-		return false;
-		
+		return false;	
 	}
 	
+	public boolean pressedChatKey() {
+		if(inputController.reloadKeyTime==1){
+			return true;
+		}
+		return false;
+	}
 	
 	public class InputRecorder{
 		private boolean recorderIsFull = false;
@@ -309,6 +331,9 @@ public class InputEngine {
 		public int jumpKeyTime;
 		public int fireKeyTime;
 		public int reloadKeyTime;
+		
+		public boolean holdingChatKey;
+		public int chatKeyTime;
 		
 		
 		@Override

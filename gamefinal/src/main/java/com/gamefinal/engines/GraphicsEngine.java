@@ -106,10 +106,12 @@ public class GraphicsEngine {
 		private static final int CAMERA_CENTER_CROSSHAIR_SIZE = 20;
 		private static final int Y_MAP_STRING_OFFSET = 18;
 		private static final int X_MAP_STRING_OFFSET = 12;
-		private static final int TILE_SPACING = 32;
+		public int TILE_SPACING = 32;
 		
-		private static final float MAX_CAMERA_VELOCITY = 32;
+		private static final float MAX_CAMERA_VELOCITY = 16;
 		private static final float CAMERA_FRICTION = 0.1f;
+		
+		private static final int CAMERA_TILE_TOLERANCE=4;
 		
 		private int cameraToleranceX;
 		private int cameraToleranceY;
@@ -123,8 +125,9 @@ public class GraphicsEngine {
 		private int nearestTileY;
 		private int farthestTileY;
 		
-		private int cameraPositionX;
-		private int cameraPositionY;
+		
+		private float cameraPositionX;
+		private float cameraPositionY;
 		
 		private int finalCameraPositionX;
 		private int finalCameraPositionY;
@@ -133,8 +136,8 @@ public class GraphicsEngine {
 			cameraPositionX=0;
 			cameraPositionY=0;
 			
-			cameraToleranceX=8;
-			cameraToleranceY=8;
+			cameraToleranceX=CAMERA_TILE_TOLERANCE;
+			cameraToleranceY=CAMERA_TILE_TOLERANCE;
 		}
 
 		public void update(){
@@ -154,7 +157,7 @@ public class GraphicsEngine {
 			
 			
 			//TODO remove this, its just a test
-			bufferGraphics.drawString("recording: "+Global.getGlobals().inputEngine.inputRecorder.getCurrentSlot(), resolutionX-120,resolutionY-40);
+			bufferGraphics.drawString("recording: "+Global.getGlobals().inputEngine.inputRecorder.getCurrentSlot(), resolutionX-100,resolutionY-40);
 			
 		}
 
@@ -221,7 +224,7 @@ public class GraphicsEngine {
 		private void renderMap(){
 			optimizeMapDrawing();
 			bufferGraphics.setFont(debugFont);
-			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapString.length;mapLevel++){
+			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapTiles.length;mapLevel++){
 				for (int mapYIndex = nearestTileY; mapYIndex < farthestTileY; mapYIndex++) {
 					for (int mapXIndex = nearestTileX; mapXIndex < farthestTileX; mapXIndex++) {
 						drawTile((mapXIndex*TILE_SPACING) - finalCameraPositionX, (mapYIndex*TILE_SPACING) + finalCameraPositionY,Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex]);
@@ -254,15 +257,15 @@ public class GraphicsEngine {
 
 		private void setCameraFinalPosition() {
 			updateCameraVelocity();
-			finalCameraPositionX=cameraPositionX-Global.getGlobals().getHalfResoulutionX();
-			finalCameraPositionY=cameraPositionY+Global.getGlobals().getHalfResoulutionY();
+			finalCameraPositionX=(int) (cameraPositionX-Global.getGlobals().getHalfResoulutionX());
+			finalCameraPositionY=(int) (cameraPositionY+Global.getGlobals().getHalfResoulutionY());
 		}
 
 		private void updateCameraVelocity() {
+			updateCameraFriction();
 			cameraPositionX+=velocityX;
 			cameraPositionY+=velocityY;
-			
-			updateCameraFriction();
+
 		}
 
 		private void updateCameraFriction() {
@@ -294,7 +297,7 @@ public class GraphicsEngine {
 			}
 		}
 
-		public int getPositionX() {
+		public float getPositionX() {
 			return cameraPositionX;
 		}
 
@@ -310,7 +313,7 @@ public class GraphicsEngine {
 			this.cameraPositionY+=distance;
 		}
 
-		public int getPositionY() {
+		public float getPositionY() {
 			return cameraPositionY;
 		}
 
