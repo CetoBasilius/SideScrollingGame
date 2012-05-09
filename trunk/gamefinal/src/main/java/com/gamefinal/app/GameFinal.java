@@ -131,12 +131,31 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	public void run() {
 		generalMainLoop();
 	}
+	
+	public class PaintThread extends Thread{
+		public PaintThread(){
+			
+		}
+		
+		public void run(){
+			while(true){
+				try {
+					Thread.sleep(MAIN_THREAD_SLEEP);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				repaint();
+			}
+		}
+	}
 
 	private void generalMainLoop() {
 		
 		try {
+			PaintThread painter = new PaintThread();
+			painter.start();
+			
 			while(true){
-				synchronized (this){
 				Global.getGlobals().inputEngine.update();
 				Global.getGlobals().graphicsEngine.measureFrames();
 				
@@ -152,12 +171,9 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 						}
 					}
 				}
-					
-				
-				
-				Thread.sleep(MAIN_THREAD_SLEEP);
-				repaint();
-				}
+	
+				Thread.sleep(50);
+				//repaint();
 			}
 		}
 		catch(Exception e)
@@ -219,7 +235,6 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 	@Override
 	public void keyPressed(KeyEvent key) {	
-		
 		Global.getGlobals().inputEngine.pressKey(key.getKeyCode());
 	}
 
@@ -230,8 +245,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		Global.getGlobals().gameConsole.update(arg0.getKeyChar());
 	}
 
 	@Override

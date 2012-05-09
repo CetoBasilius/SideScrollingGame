@@ -19,6 +19,7 @@ import com.gamefinal.helpers.StringHelper;
 
 public class Global{
 
+	private static final int CONSOLE_MARGIN = 20;
 	private static final String CONFIG_FILENAME = "config.txt";
 	private static final int DEFAULT_MAP_SIZE_Y = 256;
 	private static final int DEFAULT_MAP_SIZE_X = 512;
@@ -57,6 +58,8 @@ public class Global{
 	public CollisionEngine collisionEngine;
 	public InputEngine inputEngine;
 	
+	public Console gameConsole;
+	
 	private Global()
 	{
 		
@@ -72,6 +75,9 @@ public class Global{
 		graphicsEngine = new GraphicsEngine(component);
 		collisionEngine = new CollisionEngine();
 		inputEngine = new InputEngine();
+		
+		
+		gameConsole = new Console(CONSOLE_MARGIN,halfResoulutionY,CONSOLE_MARGIN,resolutionY-CONSOLE_MARGIN);
 	}
 
 	private void loadGlobalResources(Component component) {

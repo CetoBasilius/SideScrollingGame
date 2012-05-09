@@ -5,12 +5,15 @@ public class Console {
 	//private static final int MAX_MESSAGE_LENGHT = 24;
 	private static final int MAX_CONSOLE_LINES = 5;
 	private String consoleLines[] = new String[MAX_CONSOLE_LINES];
+	private String consoleInputLine = "";
 	
 	private int messageLogPositionX;
 	private int messageLogPositionY;
 	
 	private int inputPositionX;
 	private int inputPositionY;
+	
+	private boolean consoleActive = false;
 	
 	public Console(int logPositionX,int logPositionY,int inputX, int inputY){
 		for(int line=0;line<MAX_CONSOLE_LINES;line++){
@@ -22,8 +25,10 @@ public class Console {
 		inputPositionY = inputY;
 	}
 	
-	public void update(){
-		
+	public void update(char inputChar){
+		if(isConsoleActive()){
+			consoleInputLine+=inputChar;
+		}
 	}
 
 	public void addMessage(String message){
@@ -74,6 +79,22 @@ public class Console {
 
 	public void setInputPositionX(int inputPositionX) {
 		this.inputPositionX = inputPositionX;
+	}
+
+	public boolean isConsoleActive() {
+		return consoleActive;
+	}
+
+	public void setConsoleActive(boolean consoleActive) {
+		this.consoleActive = consoleActive;
+	}
+
+	public String getConsoleInputLine() {
+		return consoleInputLine;
+	}
+
+	public void setConsoleInputLine(String consoleInputLine) {
+		this.consoleInputLine = consoleInputLine;
 	}
 
 }
