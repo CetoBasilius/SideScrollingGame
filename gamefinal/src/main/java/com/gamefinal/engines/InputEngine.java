@@ -37,10 +37,12 @@ public class InputEngine {
 		if(inputController.holdingLeftKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(-16);}*/
 		
 		
-		if(inputController.holdingUpKey){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(1.0f);}
-		if(inputController.holdingDownKey){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(-1.0f);}
-		if(inputController.holdingRightKey){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(1.0f);}
-		if(inputController.holdingLeftKey){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(-1.0f);}
+		if(isHoldingUpKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(1.0f);}
+		if(isHoldingDownKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(-1.0f);}
+		if(isHoldingRightKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(1.0f);}
+		if(isHoldingLeftKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(-1.0f);}
+		
+		if(pressedChatKey()){Global.getGlobals().gameConsole.toggleConsole();}
 
 	}
 	
@@ -190,6 +192,7 @@ public class InputEngine {
 	//Pressed key
 	public boolean pressedUpKey() {
 		if(inputController.upKeyTime==1){
+			inputController.upKeyTime++;
 			return true;
 		}
 		return false;
@@ -197,6 +200,7 @@ public class InputEngine {
 
 	public boolean pressedDownKey() {
 		if(inputController.downKeyTime==1){
+			inputController.downKeyTime++;
 			return true;
 		}
 		return false;
@@ -204,6 +208,7 @@ public class InputEngine {
 	
 	public boolean pressedLeftKey() {
 		if(inputController.leftKeyTime==1){
+			inputController.leftKeyTime++;
 			return true;
 		}
 		return false;
@@ -211,6 +216,7 @@ public class InputEngine {
 	
 	public boolean pressedRightKey() {
 		if(inputController.rightKeyTime==1){
+			inputController.rightKeyTime++;
 			return true;
 		}
 		return false;
@@ -218,6 +224,7 @@ public class InputEngine {
 
 	public boolean pressedActionKey() {
 		if(inputController.actionKeyTime==1){
+			inputController.actionKeyTime++;
 			return true;
 		}
 		return false;
@@ -225,6 +232,7 @@ public class InputEngine {
 
 	public boolean pressedJumpKey() {
 		if(inputController.jumpKeyTime==1){
+			inputController.jumpKeyTime++;
 			return true;
 		}
 		return false;
@@ -232,6 +240,7 @@ public class InputEngine {
 
 	public boolean pressedFireKey() {
 		if(inputController.fireKeyTime==1){
+			inputController.fireKeyTime++;
 			return true;
 		}
 		return false;
@@ -239,13 +248,15 @@ public class InputEngine {
 
 	public boolean pressedReloadKey() {
 		if(inputController.reloadKeyTime==1){
+			inputController.reloadKeyTime++;
 			return true;
 		}
 		return false;	
 	}
 	
 	public boolean pressedChatKey() {
-		if(inputController.reloadKeyTime==1){
+		if(inputController.chatKeyTime==1){
+			inputController.chatKeyTime++;
 			return true;
 		}
 		return false;
