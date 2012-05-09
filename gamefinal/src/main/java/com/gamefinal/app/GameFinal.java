@@ -16,39 +16,34 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import com.gamefinal.global.Global;
 
 public class GameFinal extends Canvas implements MouseMotionListener, KeyListener, MouseListener, MouseWheelListener, Runnable{
 
-	private static final int WINDOW_THICKNESS_X = 16;
-	private static final int WINDOW_THICKNESS_Y = 38;
-	private static final int DEFAULT_RESOLUTION_Y = 480;
-	private static final int DEFAULT_RESOLUTION_X = 640;
-	private static final int MAIN_THREAD_SLEEP = 33;
 	/**
+	 * this is the main class file and contains the games main loop
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static final int WINDOW_THICKNESS_X = 6;
+	private static final int WINDOW_THICKNESS_Y = 28;
+	private static final int DEFAULT_RESOLUTION_Y = 480;
+	private static final int DEFAULT_RESOLUTION_X = 640;
+	private static final int MAIN_THREAD_SLEEP = 33;
 	public static final long PAINT_THREAD_SLEEP = 33;
+
 	private Thread mainGameThread = null;
 	private boolean mainThreadSuspended = false;
 	
 	private JFrame mainFrame;
-	private JPanel mainPanel;
 	
-	//TODO actually use this if using page flipping
-	//@SuppressWarnings("unused")
-	//private Graphics2D gameGraphics;
-	//private BufferStrategy gameBufferStrategy;
-
 	public GameFinal(){
 		init();
 		start();
 	}
 
-	
 	private void init() {
 		buildWindow();
 		
@@ -59,7 +54,6 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 		
 		prepareWindow(resolutionX, resolutionY);
 		addListeners();
-
 	}
 
 
@@ -73,30 +67,32 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 	private void prepareWindow(int resolutionX, int resolutionY) {
 		mainFrame.setSize(new Dimension(resolutionX+WINDOW_THICKNESS_X,resolutionY+WINDOW_THICKNESS_Y));
-		mainPanel.setSize(new Dimension(resolutionX,resolutionY));
 		this.setSize(resolutionX, resolutionY);
 		mainFrame.setResizable(false);
 
 		requestFocus();
-		createBufferStrategy(2);
-		//gameBufferStrategy = getBufferStrategy();
-		//TODO use this if necessary (Page flipping)
-		//gameGraphics = (Graphics2D) this.getBufferStrategy().getDrawGraphics();
 	}
 
 
 	private void buildWindow() {
 		mainFrame = new JFrame(""+serialVersionUID);
+		mainFrame.setLocation(0, 0);
+		FlowLayout mainFrameLayout = new FlowLayout();
+		mainFrameLayout.setVgap(0);
+		mainFrameLayout.setHgap(0);
+		mainFrame.setLayout(mainFrameLayout);
 		
-		mainPanel = new JPanel();
-		mainPanel.setSize(new Dimension(DEFAULT_RESOLUTION_X,DEFAULT_RESOLUTION_Y));
-		mainPanel.setLayout(new FlowLayout());
-		
+		mainFrame.setSize(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);
 		setSize(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);
 		
-		mainPanel.add(this);	
-		mainFrame.add(mainPanel);
+		
+		mainFrame.add(this);
+		//TODO add a hidden toolbar for editor and other stuff
+		//mainFrame.add(new JButton("lol"));
+		
+		mainFrame.setIgnoreRepaint(true);
 		this.setIgnoreRepaint(true);
+		
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 
@@ -241,7 +237,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	}
 
 	public void keyTyped(KeyEvent arg0) {
-		
+		if(arg0.getKeyChar()=='~'){mainFrame.setResizable(true);}
 		Global.getGlobals().gameConsole.update(arg0);
 	}
 
