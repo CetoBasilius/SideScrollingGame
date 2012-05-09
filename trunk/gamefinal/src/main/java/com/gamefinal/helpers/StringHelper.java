@@ -14,5 +14,15 @@ public class StringHelper {
 		}
 		return count;
 	}
+	
+	public static String reverseString(String inString) {
+		String resultString = "";
+		if(inString.length()>0) {
+			for(int stringCharIndex=inString.length()-1;stringCharIndex>=0;stringCharIndex--) {
+				resultString+=inString.charAt(stringCharIndex);
+			}
+		}
+		return resultString;
+	}
 
 }

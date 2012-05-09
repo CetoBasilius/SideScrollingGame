@@ -1,11 +1,13 @@
 package com.gamefinal.engines;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
 
 import com.gamefinal.app.GameObject;
@@ -13,18 +15,19 @@ import com.gamefinal.app.Tile;
 import com.gamefinal.global.Console;
 import com.gamefinal.global.Global;
 
+
 public class GraphicsEngine {
 	
 	private Boolean graphicsDebug = false;
 
-	private Graphics2D bufferGraphics;
+	private Graphics bufferGraphics;
 	private Image offScreen;
 	private ImageObserver observer;
 	
 	private int resolutionX;
 	private int resolutionY;
 	
-	private int lastFrameRate = 0;
+	private int lastFrameRate = 30;
 	public int frames = 0;
 	public int oldFrames = 0;
 	public Long frameRateMeasure;
@@ -35,7 +38,7 @@ public class GraphicsEngine {
 	public Camera gameCamera;
 	
 	
-    public GraphicsEngine(ImageObserver imageObserver){
+    public GraphicsEngine(Component imageObserver){
     	this.resolutionX = Global.getGlobals().getResolutionX();
     	this.resolutionY = Global.getGlobals().getResolutionY();
     	
@@ -43,11 +46,11 @@ public class GraphicsEngine {
     	
 		observer = imageObserver;
 
-		Component component = (Component) imageObserver;
-		component.setBackground(Color.black);
-		offScreen = component.createImage(resolutionX, resolutionY);
+		imageObserver.setBackground(Color.black);
+		offScreen = imageObserver.createImage(resolutionX, resolutionY);
+		offScreen.setAccelerationPriority(1);
 		
-		bufferGraphics = (Graphics2D) offScreen.getGraphics();
+		bufferGraphics = offScreen.getGraphics();
 		
 		bufferGraphics.setFont(guiFont);
 		bufferGraphics.setColor(Color.white);
@@ -67,6 +70,11 @@ public class GraphicsEngine {
 
 	public void renderAll(Graphics graphicsObject) {
 		resetScreen();
+		
+		//Graphics2D g2d = (Graphics2D)bufferGraphics;
+		//g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f));
+		//g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
+		
 		if (Global.getGlobals().isLoadingDone()) {
 			gameCamera.update();
 		} else {
@@ -74,6 +82,8 @@ public class GraphicsEngine {
 		}
 		drawBackBuffer(graphicsObject);
 		frames++;
+		
+		
 	}
 
 	private void drawLoadingScreen() {
@@ -101,6 +111,59 @@ public class GraphicsEngine {
 	private void setLastFrameRate(int lastFrameRate) {
 		this.lastFrameRate = lastFrameRate;
 	}
+	
+	
+	
+	public void drawImageAlpha(Image alphaImage,int posX,int posY,Image offscreenImage,ImageObserver caller,float Alpha){
+
+		Graphics2D g2d = (Graphics2D) offscreenImage.getGraphics();
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,Alpha));
+		g2d.drawImage(alphaImage,posX,posY, caller);
+		
+		//return things to normal
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
+	}
+	
+	public void drawImageAlphaRotated(Image alphaImage,int posX,int posY,float angle,Image offscreenImage,ImageObserver caller,float Alpha){
+
+		Graphics2D g2d = (Graphics2D) offscreenImage.getGraphics();
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,Alpha));
+	
+		AffineTransform affineTransform = new AffineTransform();
+		affineTransform.translate (posX,posY);
+		//g2d.fillRect((int)affineTransform.getTranslateX(), (int)affineTransform.getTranslateY(), 2, 2);
+		affineTransform.translate (-alphaImage.getWidth(caller)/2,-alphaImage.getHeight(caller)/2);
+		
+		affineTransform.rotate(Math.toRadians(angle), alphaImage.getWidth(caller)/2, alphaImage.getHeight(caller)/2); 
+		g2d.drawImage(alphaImage, affineTransform, caller);
+		
+		//return things to normal
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
+				
+	}
+	
+	public void drawImageAlphaRotatedScaled(Image alphaImage,int posX,int posY,float angle,float scale,Image offscreenImage,ImageObserver caller,float Alpha,Graphics destGraphics){
+
+		//Graphics2D g2d = (Graphics2D) offscreenImage.getGraphics();
+		Graphics2D g2d = (Graphics2D)destGraphics;
+		//g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,Alpha));
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,Alpha));
+		
+		AffineTransform affineTransform = new AffineTransform();
+		affineTransform.translate (posX,posY);
+		affineTransform.scale(scale, scale);
+		////g2d.fillRect((int)affineTransform.getTranslateX(), (int)affineTransform.getTranslateY(), 2, 2);
+		
+		affineTransform.translate (-alphaImage.getWidth(caller)/2,-alphaImage.getHeight(caller)/2);
+		affineTransform.rotate(Math.toRadians(angle), alphaImage.getWidth(caller)/2, alphaImage.getHeight(caller)/2); 
+
+		g2d.drawImage(alphaImage, affineTransform, caller);
+		
+		//return things to normal
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
+		
+	}
+	
 
 	public class Camera{
 		
@@ -130,8 +193,8 @@ public class GraphicsEngine {
 		private float cameraPositionX;
 		private float cameraPositionY;
 		
-		private int finalCameraPositionX;
-		private int finalCameraPositionY;
+		private float finalCameraPositionX;
+		private float finalCameraPositionY;
 		
 		private Camera(){
 			cameraPositionX=0;
@@ -144,7 +207,7 @@ public class GraphicsEngine {
 		public void update(){
 			setCameraFinalPosition();
 			//TODO here we can draw anything we want
-			
+
 			renderMap();
 			
 			if(graphicsDebug){showGraphicsDebugInfo();}
@@ -196,8 +259,8 @@ public class GraphicsEngine {
 		
 		
 		public void drawGameObjectBounds(GameObject object){
-			bufferGraphics.fillRect(object.getWorldPositionX() - finalCameraPositionX,object.getWorldPositionY() + finalCameraPositionY,3,3);
-			bufferGraphics.drawRect(object.getWorldPositionX() - finalCameraPositionX,object.getWorldPositionY() + finalCameraPositionY, object.getSizeX(), object.getSizeY());
+			bufferGraphics.fillRect((int)(object.getWorldPositionX() - finalCameraPositionX),(int)(object.getWorldPositionY() + finalCameraPositionY),3,3);
+			bufferGraphics.drawRect((int)(object.getWorldPositionX() - finalCameraPositionX),(int)(object.getWorldPositionY() + finalCameraPositionY), object.getSizeX(), object.getSizeY());
 		}
 
 		private void optimizeMapDrawingX() {
@@ -238,7 +301,7 @@ public class GraphicsEngine {
 			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapTiles.length;mapLevel++){
 				for (int mapYIndex = nearestTileY; mapYIndex < farthestTileY; mapYIndex++) {
 					for (int mapXIndex = nearestTileX; mapXIndex < farthestTileX; mapXIndex++) {
-						drawTile((mapXIndex*TILE_SPACING) - finalCameraPositionX, (mapYIndex*TILE_SPACING) + finalCameraPositionY,Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex]);
+						drawTile((int)((mapXIndex*TILE_SPACING) - finalCameraPositionX), (int)((mapYIndex*TILE_SPACING) + finalCameraPositionY),Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex]);
 					}
 				}
 			}
@@ -256,7 +319,7 @@ public class GraphicsEngine {
 
 							bufferGraphics.drawString(Global.getGlobals().worldMap.mapString[mapLevel][mapYIndex][mapXIndex]+","+
 									Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex].getMaxFrames()+","+
-									Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex].getCurrentFrame(), X_MAP_STRING_OFFSET + ((mapXIndex * TILE_SPACING) - finalCameraPositionX), Y_MAP_STRING_OFFSET + ((mapYIndex * TILE_SPACING) + finalCameraPositionY));
+									Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex].getCurrentFrame(), X_MAP_STRING_OFFSET + (int)((mapXIndex * TILE_SPACING) - finalCameraPositionX), Y_MAP_STRING_OFFSET + (int)((mapYIndex * TILE_SPACING) + finalCameraPositionY));
 
 						}
 					}
@@ -268,8 +331,8 @@ public class GraphicsEngine {
 
 		public void setCameraFinalPosition() {
 			updateCameraVelocity();
-			finalCameraPositionX=(int) (cameraPositionX-Global.getGlobals().getHalfResoulutionX());
-			finalCameraPositionY=(int) (cameraPositionY+Global.getGlobals().getHalfResoulutionY());
+			finalCameraPositionX=(cameraPositionX-Global.getGlobals().getHalfResoulutionX());
+			finalCameraPositionY=(cameraPositionY+Global.getGlobals().getHalfResoulutionY());
 		}
 
 		private void updateCameraVelocity() {
