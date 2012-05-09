@@ -31,6 +31,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public static final long PAINT_THREAD_SLEEP = 33;
 	private Thread mainGameThread = null;
 	private boolean mainThreadSuspended = false;
 	
@@ -127,7 +128,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 		}
 	}
 
-	@Override
+
 	public void run() {
 		generalMainLoop();
 	}
@@ -139,12 +140,14 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 		
 		public void run(){
 			while(true){
+				repaint();
+				
 				try {
-					Thread.sleep(MAIN_THREAD_SLEEP);
+					Thread.sleep(PAINT_THREAD_SLEEP);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				repaint();
+				
 			}
 		}
 	}
@@ -156,9 +159,9 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 			painter.start();
 			
 			while(true){
+				
 				Global.getGlobals().inputEngine.update();
 				Global.getGlobals().graphicsEngine.measureFrames();
-				
                 
 				if(Global.getGlobals().isLoadingDone()){
 					doGameLogic();
@@ -172,7 +175,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 					}
 				}
 	
-				Thread.sleep(50);
+				Thread.sleep(MAIN_THREAD_SLEEP);
 				//repaint();
 			}
 		}
@@ -197,64 +200,56 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
     }
 
 
-	@Override
+
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void keyPressed(KeyEvent key) {	
 		Global.getGlobals().inputEngine.pressKey(key.getKeyCode());
 	}
 
-	@Override
 	public void keyReleased(KeyEvent key) {
 		Global.getGlobals().inputEngine.releaseKey(key.getKeyCode());
 	}
 
-	@Override
 	public void keyTyped(KeyEvent arg0) {
-		Global.getGlobals().gameConsole.update(arg0.getKeyChar());
+		
+		Global.getGlobals().gameConsole.update(arg0);
 	}
 
-	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		

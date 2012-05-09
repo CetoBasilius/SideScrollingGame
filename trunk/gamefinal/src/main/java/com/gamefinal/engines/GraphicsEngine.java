@@ -10,6 +10,7 @@ import java.awt.image.ImageObserver;
 
 import com.gamefinal.app.GameObject;
 import com.gamefinal.app.Tile;
+import com.gamefinal.global.Console;
 import com.gamefinal.global.Global;
 
 public class GraphicsEngine {
@@ -108,8 +109,8 @@ public class GraphicsEngine {
 		private static final int X_MAP_STRING_OFFSET = 12;
 		public int TILE_SPACING = 32;
 		
-		private static final float MAX_CAMERA_VELOCITY = 16;
-		private static final float CAMERA_FRICTION = 0.1f;
+		private static final float MAX_CAMERA_VELOCITY = 64;
+		private static final float CAMERA_FRICTION = 0.2f;
 		
 		private static final int CAMERA_TILE_TOLERANCE=4;
 		
@@ -148,6 +149,7 @@ public class GraphicsEngine {
 			
 			if(graphicsDebug){showGraphicsDebugInfo();}
 			showFramesPerSecond();
+			renderConsole();
 		}
 
 		private void showGraphicsDebugInfo() {
@@ -155,10 +157,19 @@ public class GraphicsEngine {
 			showCameraPosition();
 			showCameraCenter();	
 			
-			
 			//TODO remove this, its just a test
 			bufferGraphics.drawString("recording: "+Global.getGlobals().inputEngine.inputRecorder.getCurrentSlot(), resolutionX-100,resolutionY-40);
 			
+		}
+
+		private void renderConsole() {
+			Console gameConsole = Global.getGlobals().gameConsole;
+			if(gameConsole.isConsoleActive()) {
+				bufferGraphics.drawString(gameConsole.getInputLinePrefix()+gameConsole.getConsoleInputLine(),gameConsole.getInputPositionX(),gameConsole.getInputPositionY());
+			}
+			for(int consoleLogIndex = 0;consoleLogIndex<Console.getMaxConsoleLines();consoleLogIndex++) {
+				bufferGraphics.drawString(gameConsole.getLine(consoleLogIndex),gameConsole.getLogPositionX(),gameConsole.getLogLinePositionY(consoleLogIndex));
+			}
 		}
 
 		private void showCameraCenter() {
@@ -255,7 +266,7 @@ public class GraphicsEngine {
 		}
 
 
-		private void setCameraFinalPosition() {
+		public void setCameraFinalPosition() {
 			updateCameraVelocity();
 			finalCameraPositionX=(int) (cameraPositionX-Global.getGlobals().getHalfResoulutionX());
 			finalCameraPositionY=(int) (cameraPositionY+Global.getGlobals().getHalfResoulutionY());

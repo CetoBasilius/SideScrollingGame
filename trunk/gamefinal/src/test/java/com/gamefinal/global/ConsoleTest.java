@@ -1,6 +1,8 @@
 package com.gamefinal.global;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -66,7 +68,23 @@ public class ConsoleTest {
 		assertEquals("Fourth Message",console.getLine(2));
 		assertEquals("Third Message",console.getLine(3));
 		assertEquals("Second Message",console.getLine(4));
+
+	}
+	
+	@Test
+	public void testConsoleToggle() {
+		Console console = new Console(0,0,0,0);
 		
+		//Console must be off from the beginning
+		assertFalse(console.isConsoleActive());
+		
+		//if we toggle the console it must turn on
+		console.toggleConsole();
+		assertTrue(console.isConsoleActive());
+		
+		//if we toggle the console it must turn off
+		console.toggleConsole();
+		assertFalse(console.isConsoleActive());
 		
 	}
 }
