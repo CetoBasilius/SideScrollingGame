@@ -1,12 +1,7 @@
 package com.gamefinal.app;
 
-
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -14,11 +9,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import com.gamefinal.global.Global;
+import org.apache.log4j.PropertyConfigurator;
 
 public class GameFinal extends Canvas implements MouseMotionListener, KeyListener, MouseListener, MouseWheelListener, Runnable{
 
@@ -48,6 +40,8 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 	private void init() {
 		setUpWindow();
+
+        PropertyConfigurator.configure(getClass().getResource("log4j.properties") );
 
 		//Here all engines are initiated
 		Global.getGlobals().init(mainFrame,mainPanel,mySelf);
