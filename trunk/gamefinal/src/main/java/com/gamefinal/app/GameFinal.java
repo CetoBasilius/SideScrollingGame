@@ -14,8 +14,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,22 +27,19 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private static final int WINDOW_THICKNESS_X = 6;
-	private static final int WINDOW_THICKNESS_Y = 28;
-	private static final int DEFAULT_RESOLUTION_Y = 480;
-	private static final int DEFAULT_RESOLUTION_X = 640;
+
 	private static final int MAIN_THREAD_SLEEP = 33;
-	public static final long PAINT_THREAD_SLEEP = 33;
+	private static final long PAINT_THREAD_SLEEP = 33;
 
 	private Thread mainGameThread = null;
 	private boolean mainThreadSuspended = false;
 
-	private JFrame mainFrame;
-	private JPanel mainPanel;
-	
 	GraphicsEnvironment graphicsEnvironment;
 	GraphicsDevice graphicsDevice;
+	
+	public JFrame mainFrame;
+	public JPanel mainPanel;
+	public Canvas mySelf;
 	
 	public GameFinal(){
 		init();
@@ -52,25 +47,16 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	}
 
 	private void init() {
-		getGraphicsDevice();
-		createMainPanel();
-		buildWindow();
-		
+		setUpWindow();
+
 		//Here all engines are initiated
-		Global.getGlobals().init(this);
+		Global.getGlobals().init(mainFrame,mainPanel,mySelf);
 		Global.getGlobals().setDefaultImage(createImage(16,16));
 		
-		prepareWindow();
+		adjustWindow();
 		addListeners();
 	}
-
-
-
-	private void getGraphicsDevice() {
-		graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
-	}
-
+	
 	private void addListeners() {
 		addMouseMotionListener(this);
 		addKeyListener(this);
@@ -78,44 +64,51 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 		addMouseWheelListener(this);
 	}
 
-
-	private void prepareWindow() {
-		int resolutionX=Global.getGlobals().getResolutionX();
-		int resolutionY=Global.getGlobals().getResolutionY();
+	private void adjustWindow() {
 		
-		mainFrame.setSize(new Dimension(resolutionX+WINDOW_THICKNESS_X,resolutionY+WINDOW_THICKNESS_Y));
-		this.setSize(resolutionX, resolutionY);
+		
+		int resolutionX=Global.getGlobals().getGameResolutionX();
+		int resolutionY=Global.getGlobals().getGameResolutionY();
+		
+		int windowPositionX = (Global.DESKTOP_RESOLUTION.width/2)-(Global.getGlobals().getGameResolutionX()/2);
+		int windowPositionY = (Global.DESKTOP_RESOLUTION.height/2)-(Global.getGlobals().getGameResolutionY()/2);
+		
+		mainFrame.setSize(new Dimension(resolutionX+Global.WINDOW_THICKNESS_X,resolutionY+Global.WINDOW_THICKNESS_Y));
 		mainFrame.setResizable(false);
-
-		requestFocus();
+		mainFrame.setLocation(windowPositionX, windowPositionY);
+		
+		mySelf.setSize(resolutionX, resolutionY);
+		
+		mainFrame.requestFocus();
+		mySelf.requestFocus();
 	}
 
 
-	private void buildWindow() {
+
+	private void setUpWindow() {
+		mySelf = this;
+		
+		graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
 		
 		mainFrame = new JFrame(graphicsDevice.getDefaultConfiguration());
-		mainFrame.setSize(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);
-		this.setSize(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);
-
-		mainFrame.add(mainPanel);
-		mainFrame.setIgnoreRepaint(true);
-		this.setIgnoreRepaint(true);
-
-		mainFrame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-
-		mainFrame.validate();
-		mainFrame.setVisible(true);
-	}
-
-	private void createMainPanel() {
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setVisible(false);
+		mainFrame.dispose();
+		mainFrame.setSize(Global.DEFAULT_GAME_RESOLUTION_X, Global.DEFAULT_GAME_RESOLUTION_Y);
+		
 		mainPanel = new JPanel();
 		mainPanel.setBackground(Color.DARK_GRAY);
 		mainPanel.setLayout(null);
-		mainPanel.add(this);
+		mainPanel.add(mySelf);
+		
+		mySelf.setSize(Global.DEFAULT_GAME_RESOLUTION_X, Global.DEFAULT_GAME_RESOLUTION_Y);
+		mySelf.setIgnoreRepaint(true);
+
+		mainFrame.add(mainPanel);
+		mainFrame.validate();
+		mainFrame.setVisible(true);
+		mainFrame.requestFocus();
 	}
 
 	
@@ -241,11 +234,6 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	}
 
 	public void keyTyped(KeyEvent arg0) {
-		//TODO remove this
-		if(arg0.getKeyChar()=='~'){
-			Global.getGlobals().graphicsEngine.setFullScreen(mainFrame,mainPanel,this);
-		}
-	
 		Global.getGlobals().gameConsole.update(arg0);
 	}
 

@@ -1,12 +1,18 @@
 package com.gamefinal.global;
 
+import java.awt.Canvas;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Vector;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import com.gamefinal.app.WorldMap;
 import com.gamefinal.engines.CollisionEngine;
@@ -19,20 +25,26 @@ import com.gamefinal.helpers.StringHelper;
 
 public class Global{
 
-	private static final int CONSOLE_MARGIN = 20;
-	private static final String CONFIG_FILENAME = "config.txt";
-	private static final int DEFAULT_MAP_SIZE_Y = 256;
-	private static final int DEFAULT_MAP_SIZE_X = 512;
-	private static final String DEFAULT_MAP_FILENAME = "out.txt";
-	private static final int DEFAULT_RESOLUTION_Y = 480;
-	private static final int DEFAULT_RESOLUTION_X = 640;
+	public static final int CONSOLE_MARGIN = 20;
+	public static final String CONFIG_FILENAME = "config.txt";
+	public static final int DEFAULT_MAP_SIZE_Y = 256;
+	public static final int DEFAULT_MAP_SIZE_X = 512;
+	public static final String DEFAULT_MAP_FILENAME = "out.txt";
+	public static final int DEFAULT_GAME_RESOLUTION_Y = 480;
+	public static final int DEFAULT_GAME_RESOLUTION_X = 640;
+	
+	public static final int WINDOW_THICKNESS_X = 6;
+	public static final int WINDOW_THICKNESS_Y = 28;
+	
+	public static final Dimension DESKTOP_RESOLUTION = Toolkit.getDefaultToolkit().getScreenSize();
+
 
 	private static Global reference;
 	
-	private int resolutionX;
-	private int resolutionY;
-	private int halfResoulutionX;
-	private int halfResoulutionY;
+	private int gameResolutionX;
+	private int gameResolutionY;
+	private int gameHalfResoulutionX;
+	private int gameHalfResoulutionY;
 	
 	private Image defaultImage;
 	public Image tileImages[];
@@ -60,24 +72,45 @@ public class Global{
 	
 	public Console gameConsole;
 	
+	public JFrame frameReference;
+	public JPanel panelReference;
+	public Canvas canvasReference;
+	
 	private Global()
 	{
 		
 	}
 	
-	public void init(Component component){
+	public void init(JFrame mainFrame, JPanel mainPanel, Canvas mainCanvas){
+		frameReference = mainFrame;
+		panelReference = mainPanel;
+		canvasReference = mainCanvas;
+		
 		setMapDefaultValues();
 		readConfig();
 		readImageList();
 		initWorldMap();
-		loadGlobalResources(component);
+		loadGlobalResources(mainFrame);
 
-		graphicsEngine = new GraphicsEngine(component);
+		graphicsEngine = new GraphicsEngine(mainFrame);
 		collisionEngine = new CollisionEngine();
 		inputEngine = new InputEngine();
 		
 		
-		gameConsole = new Console(CONSOLE_MARGIN,halfResoulutionY,CONSOLE_MARGIN,resolutionY-CONSOLE_MARGIN);
+		gameConsole = new Console(CONSOLE_MARGIN,gameHalfResoulutionY,CONSOLE_MARGIN,gameResolutionY-CONSOLE_MARGIN);
+	}
+
+	public boolean processConsoleMessage(String message) {
+		/*
+		 * Checks the message typed in the console. if the message is a command it will return false
+		 * if the message is a simple message it will return true
+		 */
+		if(message.equalsIgnoreCase("f")) {
+			graphicsEngine.toggleFullScreen();
+			return false;
+		}
+		
+		return true;
 	}
 
 	private void loadGlobalResources(Component component) {
@@ -187,12 +220,12 @@ public class Global{
 
 					if (currentReadingLineSplit[0]
 							.equalsIgnoreCase("resolutionx")) {
-						Global.getGlobals().setResolutionX(
+						Global.getGlobals().setGameResolutionX(
 								Integer.parseInt(currentReadingLineSplit[1]));
 					}
 					if (currentReadingLineSplit[0]
 							.equalsIgnoreCase("resolutiony")) {
-						Global.getGlobals().setResolutionY(
+						Global.getGlobals().setGameResolutionY(
 								Integer.parseInt(currentReadingLineSplit[1]));
 					}
 					if (currentReadingLineSplit[0].equalsIgnoreCase("mapsizex")) {
@@ -221,18 +254,18 @@ public class Global{
 	}
 	
 	public void setMapDefaultValues() {
-		setResolutionX(DEFAULT_RESOLUTION_X);
-		setResolutionY(DEFAULT_RESOLUTION_Y);
+		setGameResolutionX(DEFAULT_GAME_RESOLUTION_X);
+		setGameResolutionY(DEFAULT_GAME_RESOLUTION_Y);
 		setMapFileName(DEFAULT_MAP_FILENAME);
 		setMapSizeX(DEFAULT_MAP_SIZE_X);
 		setMapSizeY(DEFAULT_MAP_SIZE_Y);
 	}
 
-	public void setResolution(int resolutionX, int resolutionY) {
-		this.resolutionX = resolutionX;
-		this.resolutionY = resolutionY;
-		setHalfResoulutionX(resolutionX/2);
-		setHalfResoulutionY(resolutionY/2);
+	public void setResolution(int resolutionXIn, int resolutionYIn) {
+		gameResolutionX = resolutionXIn;
+		gameResolutionY = resolutionYIn;
+		setGameHalfResoulutionX(resolutionXIn/2);
+		setGameHalfResoulutionY(resolutionYIn/2);
 	}
 
 	public static Global getGlobals()
@@ -248,42 +281,38 @@ public class Global{
 		throw new CloneNotSupportedException(); 
 	}
 	
-
-	
-	
-
-	public int getResolutionX() {
-		return resolutionX;
+	public int getGameResolutionX() {
+		return gameResolutionX;
 	}
 
-	public void setResolutionX(int resolutionX) {
-		this.resolutionX = resolutionX;
-		setHalfResoulutionX(resolutionX/2);
+	public void setGameResolutionX(int resolutionX) {
+		this.gameResolutionX = resolutionX;
+		setGameHalfResoulutionX(resolutionX/2);
 	}
 
-	public int getResolutionY() {
-		return resolutionY;
+	public int getGameResolutionY() {
+		return gameResolutionY;
 	}
 
-	public void setResolutionY(int resolutionY) {
-		this.resolutionY = resolutionY;
-		setHalfResoulutionY(resolutionY/2);
+	public void setGameResolutionY(int resolutionY) {
+		this.gameResolutionY = resolutionY;
+		setGameHalfResoulutionY(resolutionY/2);
 	}
 
-	public int getHalfResoulutionY() {
-		return halfResoulutionY;
+	public int getGameHalfResoulutionY() {
+		return gameHalfResoulutionY;
 	}
 
-	private void setHalfResoulutionY(int halfResoulutionY) {
-		this.halfResoulutionY = halfResoulutionY;
+	private void setGameHalfResoulutionY(int halfResoulutionY) {
+		this.gameHalfResoulutionY = halfResoulutionY;
 	}
 
-	public int getHalfResoulutionX() {
-		return halfResoulutionX;
+	public int getGameHalfResoulutionX() {
+		return gameHalfResoulutionX;
 	}
 
-	private void setHalfResoulutionX(int halfResoulutionX) {
-		this.halfResoulutionX = halfResoulutionX;
+	private void setGameHalfResoulutionX(int halfResoulutionX) {
+		this.gameHalfResoulutionX = halfResoulutionX;
 	}
 
 	public Image getDefaultImage() {
@@ -346,5 +375,7 @@ public class Global{
 	public void setMapSizeX(int mapSizeX) {
 		this.mapSizeX = mapSizeX;
 	}
+
+	
 
 }

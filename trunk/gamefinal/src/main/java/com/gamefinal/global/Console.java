@@ -65,7 +65,10 @@ public class Console {
 	}
 	
 	private void transferMessage() {
-		addMessage(consoleInputLine);
+		//The following if checks if the message is a command.
+		if(Global.getGlobals().processConsoleMessage(consoleInputLine)){
+			addMessage(consoleInputLine);
+		}
 		consoleInputLine = "";
 	}
 
@@ -112,6 +115,7 @@ public class Console {
 	public void setConsoleActive(boolean consoleSetActive) {
 		this.consoleActive = consoleSetActive;
 		if(consoleSetActive==false) {
+			
 			transferMessage();
 		}
 	}
