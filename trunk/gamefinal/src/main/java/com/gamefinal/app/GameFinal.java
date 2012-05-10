@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -54,14 +53,14 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 	private void init() {
 		getGraphicsDevice();
+		createMainPanel();
 		buildWindow();
 		
+		//Here all engines are initiated
 		Global.getGlobals().init(this);
-		int resolutionX=Global.getGlobals().getResolutionX();
-		int resolutionY=Global.getGlobals().getResolutionY();
 		Global.getGlobals().setDefaultImage(createImage(16,16));
 		
-		prepareWindow(resolutionX, resolutionY);
+		prepareWindow();
 		addListeners();
 	}
 
@@ -80,10 +79,14 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	}
 
 
-	private void prepareWindow(int resolutionX, int resolutionY) {
+	private void prepareWindow() {
+		int resolutionX=Global.getGlobals().getResolutionX();
+		int resolutionY=Global.getGlobals().getResolutionY();
+		
 		mainFrame.setSize(new Dimension(resolutionX+WINDOW_THICKNESS_X,resolutionY+WINDOW_THICKNESS_Y));
 		this.setSize(resolutionX, resolutionY);
 		mainFrame.setResizable(false);
+
 		requestFocus();
 	}
 
@@ -93,14 +96,8 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 		mainFrame = new JFrame(graphicsDevice.getDefaultConfiguration());
 		mainFrame.setSize(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);
 		this.setSize(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);
-		
-		mainPanel = new JPanel();
-		mainPanel.setBackground(Color.DARK_GRAY);
-		mainPanel.setLayout(null);
-		mainPanel.add(this);
-		
+
 		mainFrame.add(mainPanel);
-		
 		mainFrame.setIgnoreRepaint(true);
 		this.setIgnoreRepaint(true);
 
@@ -112,6 +109,13 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 		mainFrame.validate();
 		mainFrame.setVisible(true);
+	}
+
+	private void createMainPanel() {
+		mainPanel = new JPanel();
+		mainPanel.setBackground(Color.DARK_GRAY);
+		mainPanel.setLayout(null);
+		mainPanel.add(this);
 	}
 
 	
@@ -204,36 +208,27 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
         paint(graphicsObject);
     }
 
-
-
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
-
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -247,44 +242,19 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 	public void keyTyped(KeyEvent arg0) {
 		//TODO remove this
-		if(arg0.getKeyChar()=='~')
-		{
-			setFullScreen();
+		if(arg0.getKeyChar()=='~'){
+			Global.getGlobals().graphicsEngine.setFullScreen(mainFrame,mainPanel,this);
 		}
 	
 		Global.getGlobals().gameConsole.update(arg0);
 	}
 
 	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
-	}
-	
-	private void setFullScreen() {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		mainFrame = new JFrame();
-		mainFrame.setUndecorated(true);
-		mainFrame.setLocation(0,0);
-		mainFrame.setSize(screenSize.width, screenSize.height);
-		
-		mainFrame.add(mainPanel);
-		
-		int panelPositionX = (screenSize.width/2)-(Global.getGlobals().getResolutionX()/2);
-		int panelPositionY = (screenSize.height/2)-(Global.getGlobals().getResolutionY()/2);
-		this.setLocation(panelPositionX,panelPositionY);
-		
-		mainFrame.validate();
-		mainFrame.setVisible(true);
-		mainFrame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
 	}
 
 }
