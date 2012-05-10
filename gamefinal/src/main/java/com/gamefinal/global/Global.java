@@ -1,30 +1,22 @@
 package com.gamefinal.global;
 
-import java.awt.Canvas;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import com.gamefinal.app.WorldMap;
 import com.gamefinal.engines.CollisionEngine;
 import com.gamefinal.engines.GraphicsEngine;
 import com.gamefinal.engines.InputEngine;
 import com.gamefinal.helpers.NumberHelper;
 import com.gamefinal.helpers.StringHelper;
-
-
+import org.apache.log4j.Logger;
 
 public class Global{
-
+    static final Logger logger = Logger.getLogger(Global.class);
 	public static final int CONSOLE_MARGIN = 20;
 	public static final String CONFIG_FILENAME = "config.txt";
 	public static final int DEFAULT_MAP_SIZE_Y = 256;
@@ -346,6 +338,7 @@ public class Global{
 	}
 
 	public void setGlobalStatus(String globalStatus) {
+        logger.info(globalStatus);
 		this.globalStatus = globalStatus;
 	}
 
