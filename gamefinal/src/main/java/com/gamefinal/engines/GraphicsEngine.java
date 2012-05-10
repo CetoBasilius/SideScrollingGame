@@ -1,14 +1,22 @@
 package com.gamefinal.engines;
 
 import java.awt.AlphaComposite;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import com.gamefinal.app.GameObject;
 import com.gamefinal.app.Tile;
@@ -162,6 +170,29 @@ public class GraphicsEngine {
 		//return things to normal
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 		
+	}
+	
+	public void setFullScreen(JFrame frame, JPanel panel,Canvas canvas) {
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.dispose();
+		frame = new JFrame();
+		frame.setUndecorated(true);
+		frame.setLocation(0,0);
+		frame.setSize(screenSize.width, screenSize.height);
+		
+		frame.add(panel);
+
+		int panelPositionX = (screenSize.width/2)-(Global.getGlobals().getResolutionX()/2);
+		int panelPositionY = (screenSize.height/2)-(Global.getGlobals().getResolutionY()/2);
+		canvas.setLocation(panelPositionX,panelPositionY);
+		
+		frame.validate();
+		frame.setVisible(true);
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
 	}
 	
 

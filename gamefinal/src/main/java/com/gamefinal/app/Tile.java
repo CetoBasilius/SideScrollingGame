@@ -19,16 +19,17 @@ public class Tile extends GameObject {
 	private int invertedYFlag = 1;
 	
 	public Tile(Image setImage[]){
+		super();
 		tileImages = new Image[setImage.length];
 		tileImages = setImage.clone();
 		checkImage();
 	}
 	
 	public Tile(Image setImage){
+		super();
 		tileImages = new Image[1];
 		tileImages[0] = setImage;
-		checkImage();
-		
+		checkImage();	
 	}
 
 	private void checkImage() {
@@ -57,6 +58,7 @@ public class Tile extends GameObject {
 	}
 
 	public void update(){
+		super.update();
 		if(tileHasImage){
 			currentStepsToNextFrame++;
 			if(currentStepsToNextFrame>=frameStepsToNextFrame){
