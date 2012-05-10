@@ -18,7 +18,7 @@ import com.gamefinal.global.Global;
 
 public class GraphicsEngine {
 	
-	private Boolean graphicsDebug = false;
+	private Boolean graphicsDebug = true;
 
 	private Graphics bufferGraphics;
 	private Image offScreen;
@@ -38,6 +38,8 @@ public class GraphicsEngine {
 	public Camera gameCamera;
 	
 	private boolean fullScreen = false;
+	
+	private Camera savedCamera;
 	
     public GraphicsEngine(Component imageObserver){
     	this.resolutionX = Global.getGlobals().getGameResolutionX();
@@ -113,6 +115,13 @@ public class GraphicsEngine {
 		this.lastFrameRate = lastFrameRate;
 	}
 	
+	public void saveCameraState() {
+		savedCamera = gameCamera.clone();
+	}
+	
+	public void reloadCameraState() {
+		this.gameCamera = savedCamera.clone();
+	}
 	
 	
 	public void drawImageAlpha(Image alphaImage,int posX,int posY,Image offscreenImage,ImageObserver caller,float Alpha){
@@ -166,25 +175,39 @@ public class GraphicsEngine {
 	}
 	
 	public void toggleFullScreen() {
+		int gameResolutionX = Global.getGlobals().getGameResolutionX();
+		int gameResolutionY = Global.getGlobals().getGameResolutionY();
+		int defaultWindowPositionX = Global.getGlobals().getDefaultWindowPositionX();
+		int defaultWindowPositionY = Global.getGlobals().getDefaultWindowPositionY();
+		
 		if(fullScreen==false) {
-			
+
+			//Set Fullscreen On
 			Global.getGlobals().frameReference.setVisible(false);
 			Global.getGlobals().frameReference.dispose();
 			Global.getGlobals().frameReference.setUndecorated(true);
+			Global.getGlobals().frameReference.setLocation(0, 0);
+			Global.getGlobals().frameReference.setSize(Global.DESKTOP_RESOLUTION);
 			Global.getGlobals().frameReference.setVisible(true);
 			Global.getGlobals().frameReference.validate();
 			Global.getGlobals().frameReference.requestFocus();
+			Global.getGlobals().canvasReference.setLocation(defaultWindowPositionX,defaultWindowPositionY);
 			Global.getGlobals().canvasReference.requestFocus();
 			fullScreen=true;
 		}
 		else
 		{
+			
+			//Set Fullscreen Off
 			Global.getGlobals().frameReference.setVisible(false);
 			Global.getGlobals().frameReference.dispose();
 			Global.getGlobals().frameReference.setUndecorated(false);
+			Global.getGlobals().frameReference.setLocation(defaultWindowPositionX,defaultWindowPositionY);
+			Global.getGlobals().frameReference.setSize(gameResolutionX+Global.WINDOW_THICKNESS_X,gameResolutionY+Global.WINDOW_THICKNESS_Y);
 			Global.getGlobals().frameReference.setVisible(true);
 			Global.getGlobals().frameReference.validate();
 			Global.getGlobals().frameReference.requestFocus();
+			Global.getGlobals().canvasReference.setLocation(0,0);
 			Global.getGlobals().canvasReference.requestFocus();
 			fullScreen=false;
 		}
@@ -194,7 +217,7 @@ public class GraphicsEngine {
 		return fullScreen;
 	}
 
-	public class Camera{
+	public class Camera implements Cloneable{
 		
 		private static final int CAMERA_CENTER_CROSSHAIR_SIZE = 20;
 		private static final int Y_MAP_STRING_OFFSET = 18;
@@ -217,7 +240,6 @@ public class GraphicsEngine {
 		
 		private int nearestTileY;
 		private int farthestTileY;
-		
 		
 		private float cameraPositionX;
 		private float cameraPositionY;
@@ -248,10 +270,21 @@ public class GraphicsEngine {
 			renderMapDebug();
 			showCameraPosition();
 			showCameraCenter();	
-			
-			//TODO remove this, its just a test
+			showRecorderState();
+		}
+		
+		public Camera clone() {
+			Camera returnedClone = null;
+			try {
+				returnedClone = (Camera) super.clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+			return returnedClone;
+		}
+
+		private void showRecorderState() {
 			bufferGraphics.drawString("recording: "+Global.getGlobals().inputEngine.inputRecorder.getCurrentSlot(), resolutionX-100,resolutionY-40);
-			
 		}
 
 		private void renderConsole() {
@@ -272,7 +305,7 @@ public class GraphicsEngine {
 
 		private void showCameraPosition() {
 			bufferGraphics.setColor(Color.white);
-			bufferGraphics.drawString("Camera Position: "+this.getPositionX()+","+this.getPositionY(), 10,resolutionY-20);
+			bufferGraphics.drawString("Camera Position: "+this.getPositionX()+","+this.getPositionY(), 10,resolutionY-40);
 		}
 
 		private void showFramesPerSecond() {
@@ -435,6 +468,8 @@ public class GraphicsEngine {
 				this.velocityY+=velocity;
 			}
 		}
+
+		
 	}
 
 }

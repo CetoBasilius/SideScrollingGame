@@ -65,16 +65,14 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	}
 
 	private void adjustWindow() {
-		
-		
 		int resolutionX=Global.getGlobals().getGameResolutionX();
 		int resolutionY=Global.getGlobals().getGameResolutionY();
-		
-		int windowPositionX = (Global.DESKTOP_RESOLUTION.width/2)-(Global.getGlobals().getGameResolutionX()/2);
-		int windowPositionY = (Global.DESKTOP_RESOLUTION.height/2)-(Global.getGlobals().getGameResolutionY()/2);
+		int windowPositionX = Global.getGlobals().getDefaultWindowPositionX();
+		int windowPositionY = Global.getGlobals().getDefaultWindowPositionY();
 		
 		mainFrame.setSize(new Dimension(resolutionX+Global.WINDOW_THICKNESS_X,resolutionY+Global.WINDOW_THICKNESS_Y));
 		mainFrame.setResizable(false);
+		
 		mainFrame.setLocation(windowPositionX, windowPositionY);
 		
 		mySelf.setSize(resolutionX, resolutionY);

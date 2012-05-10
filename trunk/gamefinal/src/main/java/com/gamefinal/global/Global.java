@@ -76,8 +76,10 @@ public class Global{
 	public JPanel panelReference;
 	public Canvas canvasReference;
 	
-	private Global()
-	{
+	private int defaultWindowPositionX;
+	private int defaultWindowPositionY;
+	
+	private Global(){
 		
 	}
 	
@@ -88,6 +90,7 @@ public class Global{
 		
 		setMapDefaultValues();
 		readConfig();
+		setDefaultWindowPosition();
 		readImageList();
 		initWorldMap();
 		loadGlobalResources(mainFrame);
@@ -95,9 +98,12 @@ public class Global{
 		graphicsEngine = new GraphicsEngine(mainFrame);
 		collisionEngine = new CollisionEngine();
 		inputEngine = new InputEngine();
-		
-		
 		gameConsole = new Console(CONSOLE_MARGIN,gameHalfResoulutionY,CONSOLE_MARGIN,gameResolutionY-CONSOLE_MARGIN);
+	}
+
+	private void setDefaultWindowPosition() {
+		setDefaultWindowPositionX((DESKTOP_RESOLUTION.width/2)-(getGameResolutionX()/2));
+		setDefaultWindowPositionY((DESKTOP_RESOLUTION.height/2)-(getGameResolutionY()/2));
 	}
 
 	public boolean processConsoleMessage(String message) {
@@ -105,8 +111,23 @@ public class Global{
 		 * Checks the message typed in the console. if the message is a command it will return false
 		 * if the message is a simple message it will return true
 		 */
-		if(message.equalsIgnoreCase("f")) {
+		if(message.equalsIgnoreCase("fullscreen")) {
 			graphicsEngine.toggleFullScreen();
+			return false;
+		}
+		
+		if(message.equalsIgnoreCase("record")) {
+			inputEngine.inputRecorder.startRecording();
+			return false;
+		}
+		
+		if(message.equalsIgnoreCase("playback")) {
+			inputEngine.inputRecorder.startPlayBack();
+			return false;
+		}
+		
+		if(message.equalsIgnoreCase("stoprecord")) {
+			inputEngine.inputRecorder.stopRecording();
 			return false;
 		}
 		
@@ -123,7 +144,6 @@ public class Global{
 		Vector<String> tileFileNamesVector = new Vector<String>();
 		Vector<Vector<String>> animatedTileFileNamesVector = new Vector<Vector<String>>();
 		
-		
 		//TODO extract a function to set a value depending on the string that we ask for
 		//study property files
 		int allAnimatedTiles=0;
@@ -135,7 +155,6 @@ public class Global{
 			InputStreamReader imageFileInputStreamReader = new InputStreamReader(imageFileInputStream);
 			BufferedReader imageFileBufferedReader = new BufferedReader(imageFileInputStreamReader);
 			String currentReadingLine = null;
-			
 			
 			while ((currentReadingLine = imageFileBufferedReader.readLine()) != null) {	
 			
@@ -183,7 +202,6 @@ public class Global{
 			tileImagesFileNames = new String[tileVectorSize];
 			tileFileNamesVector.toArray(tileImagesFileNames); 
 		}
-
 		
 		int animatedTileVectorSize = animatedTileFileNamesVector.size();
 		if(animatedTileVectorSize>0){
@@ -376,6 +394,20 @@ public class Global{
 		this.mapSizeX = mapSizeX;
 	}
 
-	
+	public int getDefaultWindowPositionX() {
+		return defaultWindowPositionX;
+	}
+
+	public void setDefaultWindowPositionX(int defaultWindowPositionX) {
+		this.defaultWindowPositionX = defaultWindowPositionX;
+	}
+
+	public int getDefaultWindowPositionY() {
+		return defaultWindowPositionY;
+	}
+
+	public void setDefaultWindowPositionY(int defaultWindowPositionY) {
+		this.defaultWindowPositionY = defaultWindowPositionY;
+	}
 
 }
