@@ -20,8 +20,8 @@ public class InputEngine {
 	
 	private static final int CHAT_KEY_CODE = KeyEvent.VK_ENTER;
 
-	InputEngineController inputController = new InputEngineController();
-	InputRecorder inputRecorder = new InputRecorder();
+	private InputEngineController inputController = new InputEngineController();
+	public InputRecorder inputRecorder = new InputRecorder();
 
 	
 	public void update(){
@@ -265,7 +265,7 @@ public class InputEngine {
 	public class InputRecorder{
 		private boolean recorderIsFull = false;
 		private int currentPlayBackPosition = 0;
-		private static final int MAX_RECORDED_COMMANDS = 400;
+		private static final int MAX_RECORDED_COMMANDS = 1000;
 		private InputEngineController inputRecord[] = new InputEngineController[MAX_RECORDED_COMMANDS];
 		public RecorderState recorderState = RecorderState.OFF;
 		
@@ -277,7 +277,7 @@ public class InputEngine {
 		}
 
 		public InputEngineController update(InputEngineController inputControllerIn) {
-
+			
 			if(recorderState==RecorderState.RECORDING){
 				this.addMessage(inputControllerIn);
 			}
@@ -293,12 +293,12 @@ public class InputEngine {
 
 		private InputEngineController replay() {
 			if(currentPlayBackPosition==MAX_RECORDED_COMMANDS){
-				//TODO reload everything.
+				//TODO here we can load but i think i will remove this in the future
 			}
 			currentPlayBackPosition--;
-			if(currentPlayBackPosition<=0){
+			if(currentPlayBackPosition<1){
 				recorderIsFull=false;
-				
+				recorderState = RecorderState.OFF;
 			}
 			return inputRecord[currentPlayBackPosition];
 		}
@@ -313,6 +313,9 @@ public class InputEngine {
 				inputRecord[a]=inputRecord[a-1];
 			}
 			inputRecord[0]=message.clone();
+			if(currentPlayBackPosition==0) {
+				Global.getGlobals().graphicsEngine.saveCameraState();
+			}
 			currentPlayBackPosition++;
 			if(currentPlayBackPosition>=MAX_RECORDED_COMMANDS){
 				recorderIsFull=true;
@@ -322,6 +325,21 @@ public class InputEngine {
 
 		public int getCurrentSlot() {
 			return currentPlayBackPosition;
+		}
+		
+		public void startRecording() {
+			recorderState = RecorderState.RECORDING;
+		}
+		
+		public void stopRecording() {
+			recorderState = RecorderState.OFF;
+		}
+		
+		public void startPlayBack() {
+			if(currentPlayBackPosition>0) {
+				Global.getGlobals().graphicsEngine.reloadCameraState();
+				recorderState = RecorderState.PLAYBACK;
+			}
 		}
 	}
 	

@@ -122,7 +122,7 @@
   </class>  
   <class id="16" corner="BOTTOM_RIGHT" language="java" name="com.gamefinal.app.GameFinal.PaintThread" 
     project="gamefinal" file="/gamefinal/src/main/java/com/gamefinal/app/GameFinal.java" binary="false">    
-    <position height="-1" width="-1" x="129" y="851"/>    
+    <position height="-1" width="-1" x="159" y="824"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
