@@ -13,10 +13,10 @@ public class GlobalTest {
 		
 		assertEquals(global1,global2);
 		
-		global1.setResolutionX(900);
-		global2.setResolutionX(500);
+		global1.setGameResolutionX(900);
+		global2.setGameResolutionX(500);
 		
 		//Resolution must be the same even though we set it differently
-		assertEquals(global1.getResolutionX(),global2.getResolutionX());
+		assertEquals(global1.getGameResolutionX(),global2.getGameResolutionX());
 	}
 }

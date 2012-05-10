@@ -1,22 +1,14 @@
 package com.gamefinal.engines;
 
 import java.awt.AlphaComposite;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import com.gamefinal.app.GameObject;
 import com.gamefinal.app.Tile;
@@ -45,10 +37,11 @@ public class GraphicsEngine {
 	private Font debugFont = new Font("Arial", Font.BOLD, 10);
 	public Camera gameCamera;
 	
+	private boolean fullScreen = false;
 	
     public GraphicsEngine(Component imageObserver){
-    	this.resolutionX = Global.getGlobals().getResolutionX();
-    	this.resolutionY = Global.getGlobals().getResolutionY();
+    	this.resolutionX = Global.getGlobals().getGameResolutionX();
+    	this.resolutionY = Global.getGlobals().getGameResolutionY();
     	
     	gameCamera = new Camera();
     	
@@ -96,11 +89,11 @@ public class GraphicsEngine {
 
 	private void drawLoadingScreen() {
 		bufferGraphics.drawString("Loading", Global.getGlobals()
-				.getHalfResoulutionX(), Global.getGlobals()
-				.getHalfResoulutionY());
+				.getGameHalfResoulutionX(), Global.getGlobals()
+				.getGameHalfResoulutionY());
 		bufferGraphics.drawString(Global.getGlobals().getGlobalStatus(), Global
-				.getGlobals().getHalfResoulutionX(), Global.getGlobals()
-				.getHalfResoulutionY() - 20);
+				.getGlobals().getGameHalfResoulutionX(), Global.getGlobals()
+				.getGameHalfResoulutionY() - 20);
 	}
 
 	private void drawBackBuffer(Graphics graphicsObject) {
@@ -169,32 +162,37 @@ public class GraphicsEngine {
 		
 		//return things to normal
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
-		
-	}
-	
-	public void setFullScreen(JFrame frame, JPanel panel,Canvas canvas) {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.dispose();
-		frame = new JFrame();
-		frame.setUndecorated(true);
-		frame.setLocation(0,0);
-		frame.setSize(screenSize.width, screenSize.height);
-		
-		frame.add(panel);
 
-		int panelPositionX = (screenSize.width/2)-(Global.getGlobals().getResolutionX()/2);
-		int panelPositionY = (screenSize.height/2)-(Global.getGlobals().getResolutionY()/2);
-		canvas.setLocation(panelPositionX,panelPositionY);
-		
-		frame.validate();
-		frame.setVisible(true);
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
 	}
 	
+	public void toggleFullScreen() {
+		if(fullScreen==false) {
+			
+			Global.getGlobals().frameReference.setVisible(false);
+			Global.getGlobals().frameReference.dispose();
+			Global.getGlobals().frameReference.setUndecorated(true);
+			Global.getGlobals().frameReference.setVisible(true);
+			Global.getGlobals().frameReference.validate();
+			Global.getGlobals().frameReference.requestFocus();
+			Global.getGlobals().canvasReference.requestFocus();
+			fullScreen=true;
+		}
+		else
+		{
+			Global.getGlobals().frameReference.setVisible(false);
+			Global.getGlobals().frameReference.dispose();
+			Global.getGlobals().frameReference.setUndecorated(false);
+			Global.getGlobals().frameReference.setVisible(true);
+			Global.getGlobals().frameReference.validate();
+			Global.getGlobals().frameReference.requestFocus();
+			Global.getGlobals().canvasReference.requestFocus();
+			fullScreen=false;
+		}
+	}
+
+	public boolean isFullScreen() {
+		return fullScreen;
+	}
 
 	public class Camera{
 		
@@ -362,8 +360,8 @@ public class GraphicsEngine {
 
 		public void setCameraFinalPosition() {
 			updateCameraVelocity();
-			finalCameraPositionX=(cameraPositionX-Global.getGlobals().getHalfResoulutionX());
-			finalCameraPositionY=(cameraPositionY+Global.getGlobals().getHalfResoulutionY());
+			finalCameraPositionX=(cameraPositionX-Global.getGlobals().getGameHalfResoulutionX());
+			finalCameraPositionY=(cameraPositionY+Global.getGlobals().getGameHalfResoulutionY());
 		}
 
 		private void updateCameraVelocity() {
