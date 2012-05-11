@@ -8,10 +8,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import com.gamefinal.global.Global;
-
-
+import org.apache.log4j.Logger;
 
 public class WorldMap {
+    static final Logger logger = Logger.getLogger(WorldMap.class);
 	private static final int TILE_SPACING = 32;
 	public final int maxMapLevels = 4;
 	public enum mapLevel { BACK_BACK,BACK,MIDDLE,FRONT }
@@ -211,7 +211,8 @@ public class WorldMap {
 				String numberAnimatedEffectString=tileString.substring(1);
 				if(numberAnimatedEffectString.matches("^[0-9-]+$")){
 					int numberAnimatedEffect=Integer.parseInt(numberAnimatedEffectString);
-					if(numberAnimatedEffect<Global.getGlobals().animatedTileImages.length)
+                    logger.debug("animatedTileImages == null :"+ Global.getGlobals().animatedTileImages == null);
+					if(numberAnimatedEffect< Global.getGlobals().animatedTileImages.length)
 					{
 						if(Global.getGlobals().animatedTileImages[numberAnimatedEffect][0]!=null)
 						{
