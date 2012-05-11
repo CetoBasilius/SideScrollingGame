@@ -24,12 +24,14 @@ import com.gamefinal.helpers.NumberHelper;
 import com.gamefinal.helpers.StringHelper;
 
 public class Global{
-    static final Logger logger = Logger.getLogger(Global.class);
+    private static final String CONFIGURATION_FOLDER = "configuration/";
+	static final Logger logger = Logger.getLogger(Global.class);
 	public static final int CONSOLE_MARGIN = 20;
 	public static final String CONFIG_FILENAME = "config.txt";
 	public static final int DEFAULT_MAP_SIZE_Y = 256;
 	public static final int DEFAULT_MAP_SIZE_X = 512;
 	public static final String DEFAULT_MAP_FILENAME = "out.txt";
+	public static final String DEFAULT_IMAGELIST_FILENAME = "imagelist.txt";
 	public static final int DEFAULT_GAME_RESOLUTION_Y = 480;
 	public static final int DEFAULT_GAME_RESOLUTION_X = 640;
 	
@@ -51,7 +53,7 @@ public class Global{
 	public Image triangleTileImages[];
 	public Image animatedTileImages[][];
 	
-	private String imageListFileName;
+	private String imageListFileName = DEFAULT_IMAGELIST_FILENAME;
 	public String tileImagesFileNames[];
 	public String animatedTileImagesFileNames[][];
 	
@@ -88,6 +90,8 @@ public class Global{
 		panelReference = mainPanel;
 		canvasReference = mainCanvas;
 		
+		
+		
 		setMapDefaultValues();
 		readConfig();
 		setDefaultWindowPosition();
@@ -116,7 +120,7 @@ public class Global{
 			return false;
 		}
 		
-		if(message.equalsIgnoreCase("record")) {
+		if(message.equalsIgnoreCase("startrecord")) {
 			inputEngine.inputRecorder.startRecording();
 			return false;
 		}
@@ -128,6 +132,11 @@ public class Global{
 		
 		if(message.equalsIgnoreCase("stoprecord")) {
 			inputEngine.inputRecorder.stopRecording();
+			return false;
+		}
+		
+		if(message.equalsIgnoreCase("graphicsdebug")) {
+			graphicsEngine.toggleGraphicsDebug();
 			return false;
 		}
 		
@@ -150,7 +159,7 @@ public class Global{
 		int maxAnimatedTileFrames=0;
 		try {
 			InputStream imageFileInputStream;
-			URL imageFileFileLocation = getClass().getResource("configuration\\"+imageListFileName);
+			URL imageFileFileLocation = getClass().getResource(CONFIGURATION_FOLDER+imageListFileName);
 			setGlobalStatus("Loading file at "+imageFileFileLocation.getPath());
 			imageFileInputStream = imageFileFileLocation.openStream();
 			InputStreamReader imageFileInputStreamReader = new InputStreamReader(imageFileInputStream);
@@ -226,7 +235,7 @@ public class Global{
 	{
 		InputStream configInputStream;
 		try {
-			URL configFileLocation = getClass().getResource("configuration\\"+CONFIG_FILENAME);
+			URL configFileLocation = getClass().getResource(CONFIGURATION_FOLDER+CONFIG_FILENAME);
 			setGlobalStatus("Loading file at "+configFileLocation.getPath());
 			
 			configInputStream = configFileLocation.openStream();
@@ -265,6 +274,7 @@ public class Global{
 						Global.getGlobals().setImageListFileName(
 								currentReadingLineSplit[1]);
 					}
+					
 				}
 			}
 		} catch (Exception e) {
@@ -276,6 +286,7 @@ public class Global{
 		setGameResolutionX(DEFAULT_GAME_RESOLUTION_X);
 		setGameResolutionY(DEFAULT_GAME_RESOLUTION_Y);
 		setMapFileName(DEFAULT_MAP_FILENAME);
+		
 		setMapSizeX(DEFAULT_MAP_SIZE_X);
 		setMapSizeY(DEFAULT_MAP_SIZE_Y);
 	}

@@ -25,23 +25,21 @@ public class InputEngine {
 
 	
 	public void update(){
-		//TODO remove this and record with command line or menu
-		//if(inputRecorder.isFull()==false){inputRecorder.recorderState = RecorderState.RECORDING;}
-		//else{inputRecorder.recorderState = RecorderState.PLAYBACK;}
-		
 		inputController = inputRecorder.update(inputController);
-		
-		/*if(inputController.holdingUpKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraVertical(16);}
-		if(inputController.holdingDownKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraVertical(-16);}
-		if(inputController.holdingRightKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(16);}
-		if(inputController.holdingLeftKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(-16);}*/
-		
-		
-		if(isHoldingUpKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(1.0f);}
-		if(isHoldingDownKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(-1.0f);}
-		if(isHoldingRightKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(1.0f);}
-		if(isHoldingLeftKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(-1.0f);}
-		
+		if(!Global.getGlobals().gameConsole.isConsoleActive()) {
+
+			/*if(inputController.holdingUpKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraVertical(16);}
+			if(inputController.holdingDownKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraVertical(-16);}
+			if(inputController.holdingRightKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(16);}
+			if(inputController.holdingLeftKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(-16);}*/
+
+
+			if(isHoldingUpKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(1.0f);}
+			if(isHoldingDownKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(-1.0f);}
+			if(isHoldingRightKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(1.0f);}
+			if(isHoldingLeftKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityX(-1.0f);}
+		}
+
 		if(pressedChatKey()){Global.getGlobals().gameConsole.toggleConsole();}
 
 	}
@@ -265,6 +263,7 @@ public class InputEngine {
 	public class InputRecorder{
 		private boolean recorderIsFull = false;
 		private int currentPlayBackPosition = 0;
+		private int savedPlayBackPosition = 0;
 		private static final int MAX_RECORDED_COMMANDS = 1000;
 		private InputEngineController inputRecord[] = new InputEngineController[MAX_RECORDED_COMMANDS];
 		public RecorderState recorderState = RecorderState.OFF;
@@ -317,6 +316,8 @@ public class InputEngine {
 				Global.getGlobals().graphicsEngine.saveCameraState();
 			}
 			currentPlayBackPosition++;
+			savedPlayBackPosition = currentPlayBackPosition;
+			
 			if(currentPlayBackPosition>=MAX_RECORDED_COMMANDS-1){
 				recorderIsFull=true;
 				recorderState = RecorderState.OFF;
@@ -337,7 +338,8 @@ public class InputEngine {
 		}
 		
 		public void startPlayBack() {
-			if(currentPlayBackPosition>0) {
+			if(savedPlayBackPosition>0) {
+				currentPlayBackPosition = savedPlayBackPosition;
 				Global.getGlobals().graphicsEngine.reloadCameraState();
 				recorderState = RecorderState.PLAYBACK;
 			}
