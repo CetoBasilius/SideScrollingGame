@@ -4,7 +4,7 @@
 
     <groupId>com.gamefinal</groupId>
     <artifactId>gamefinal</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <name>gamefinal</name>
     <url>http://maven.apache.org</url>
@@ -72,7 +72,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <finalName>run-${artifactId}-${version}</finalName>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
             </plugin>
         </plugins>
