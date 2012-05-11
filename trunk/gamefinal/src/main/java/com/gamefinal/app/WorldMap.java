@@ -7,8 +7,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import com.gamefinal.global.Global;
 import org.apache.log4j.Logger;
+
+import com.gamefinal.global.Global;
 
 public class WorldMap {
     static final Logger logger = Logger.getLogger(WorldMap.class);
@@ -186,23 +187,30 @@ public class WorldMap {
 			}
 		}
 		//TODO load animated tiles
+		Image[][] globalAnimatedTileImages = Global.getGlobals().animatedTileImages;
 		
 		if(tileString.length()==3){
 			if(tileString.charAt(0)=='A'){
 				String numberAnimatedEffectString=tileString.substring(1);
 				if(numberAnimatedEffectString.matches("^[0-9-]+$")){
 					int numberAnimatedEffect=Integer.parseInt(numberAnimatedEffectString);
-					if(numberAnimatedEffect<Global.getGlobals().animatedTileImages.length)
-					{
-						if(Global.getGlobals().animatedTileImages[numberAnimatedEffect][0]!=null)
+					if(globalAnimatedTileImages!=null) {
+						if(numberAnimatedEffect<globalAnimatedTileImages.length)
 						{
+							if(globalAnimatedTileImages[numberAnimatedEffect][0]!=null)
+							{
 
-							//Normal tile
-							mapTiles[mapLevel][mapY][mapX] = new Tile(Global.getGlobals().animatedTileImages[numberAnimatedEffect]);
-							//mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
-							mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
+								//Normal tile
+								mapTiles[mapLevel][mapY][mapX] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
+								//mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
+								mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
 
+							}
 						}
+					}
+					else
+					{
+						mapTiles[mapLevel][mapY][mapX] = new Tile();
 					}
 				}
 			}
@@ -211,18 +219,24 @@ public class WorldMap {
 				String numberAnimatedEffectString=tileString.substring(1);
 				if(numberAnimatedEffectString.matches("^[0-9-]+$")){
 					int numberAnimatedEffect=Integer.parseInt(numberAnimatedEffectString);
-                    logger.debug("animatedTileImages == null :"+ Global.getGlobals().animatedTileImages == null);
-					if(numberAnimatedEffect< Global.getGlobals().animatedTileImages.length)
-					{
-						if(Global.getGlobals().animatedTileImages[numberAnimatedEffect][0]!=null)
+					//logger.debug("animatedTileImages == null :"+ Global.getGlobals().animatedTileImages == null);
+					if(globalAnimatedTileImages!=null) {
+						if(numberAnimatedEffect< globalAnimatedTileImages.length)
 						{
+							if(globalAnimatedTileImages[numberAnimatedEffect][0]!=null)
+							{
 
-							//Normal tile
-							mapTiles[mapLevel][mapY][mapX] = new Tile(Global.getGlobals().animatedTileImages[numberAnimatedEffect]);
-							//mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
-							mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
+								//Normal tile
+								mapTiles[mapLevel][mapY][mapX] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
+								//mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
+								mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
 
+							}
 						}
+					}
+					else
+					{
+						mapTiles[mapLevel][mapY][mapX] = new Tile();
 					}
 				}
 			}

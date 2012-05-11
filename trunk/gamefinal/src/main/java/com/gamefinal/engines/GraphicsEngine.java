@@ -18,7 +18,7 @@ import com.gamefinal.global.Global;
 
 public class GraphicsEngine {
 	
-	private Boolean graphicsDebug = true;
+	private Boolean graphicsDebug = false;
 
 	private Graphics bufferGraphics;
 	private Image offScreen;
@@ -215,6 +215,23 @@ public class GraphicsEngine {
 
 	public boolean isFullScreen() {
 		return fullScreen;
+	}
+
+	public void toggleGraphicsDebug() {
+		if(graphicsDebug) {
+			graphicsDebug=false;
+		}
+		else
+		{
+			graphicsDebug=true;
+		}
+	}
+	public Boolean isGraphicsDebugging() {
+		return graphicsDebug;
+	}
+
+	public void setGraphicsDebug(Boolean graphicsDebug) {
+		this.graphicsDebug = graphicsDebug;
 	}
 
 	public class Camera implements Cloneable{

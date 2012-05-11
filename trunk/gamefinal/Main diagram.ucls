@@ -50,7 +50,7 @@
   </class>  
   <class id="7" corner="BOTTOM_RIGHT" language="java" name="com.gamefinal.engines.CollisionEngine" project="gamefinal" 
     file="/gamefinal/src/main/java/com/gamefinal/engines/CollisionEngine.java" binary="false">    
-    <position height="-1" width="-1" x="1230" y="1274"/>    
+    <position height="-1" width="-1" x="1221" y="1438"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
