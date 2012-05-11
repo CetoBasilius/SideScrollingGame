@@ -1,7 +1,11 @@
 package com.gamefinal.app;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -9,8 +13,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import com.gamefinal.global.Global;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import org.apache.log4j.PropertyConfigurator;
+
+import com.gamefinal.global.Global;
 
 public class GameFinal extends Canvas implements MouseMotionListener, KeyListener, MouseListener, MouseWheelListener, Runnable{
 
@@ -43,7 +52,9 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
         PropertyConfigurator.configure(getClass().getResource("log4j.properties") );
 
-		//Here all engines are initiated
+		//Here all engines are initiated.
+        //the parameters are the components of the window so that 
+        //graphicsengine can switch between windowed and full screen mode
 		Global.getGlobals().init(mainFrame,mainPanel,mySelf);
 		Global.getGlobals().setDefaultImage(createImage(16,16));
 		
