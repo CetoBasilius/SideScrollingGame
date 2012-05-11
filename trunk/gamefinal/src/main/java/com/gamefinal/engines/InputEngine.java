@@ -317,9 +317,10 @@ public class InputEngine {
 				Global.getGlobals().graphicsEngine.saveCameraState();
 			}
 			currentPlayBackPosition++;
-			if(currentPlayBackPosition>=MAX_RECORDED_COMMANDS){
+			if(currentPlayBackPosition>=MAX_RECORDED_COMMANDS-1){
 				recorderIsFull=true;
-				currentPlayBackPosition=MAX_RECORDED_COMMANDS;
+				recorderState = RecorderState.OFF;
+				currentPlayBackPosition=MAX_RECORDED_COMMANDS-1;
 			}
 		}
 

@@ -22,7 +22,6 @@ public class LoadGlobalResources extends Thread{
 		Global.getGlobals().setLoadingNotDone();
 		//TODO load stuff
 
-		
 		loadAllTiles();
 		loadAllAnimatedTiles();
 		makeTriangleTileSet();
