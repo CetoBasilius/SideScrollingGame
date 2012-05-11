@@ -144,8 +144,8 @@ public class Global {
         int maxAnimatedTileFrames = 0;
         try {
 
-
-            InputStreamReader imageFileInputStreamReader = new InputStreamReader(getClass().getResourceAsStream("configuration\\" + imageListFileName));
+            InputStreamReader imageFileInputStreamReader =
+                new InputStreamReader(getClass().getResourceAsStream("configuration/" + imageListFileName));
             BufferedReader imageFileBufferedReader = new BufferedReader(imageFileInputStreamReader);
             String currentReadingLine = null;
 
@@ -219,8 +219,9 @@ public class Global {
 
     private void readConfig() {
         InputStream configInputStream;
+        logger.info("readConfig init");
         try {
-            URL configFileLocation = getClass().getResource("configuration\\" + CONFIG_FILENAME);
+            URL configFileLocation = getClass().getResource("configuration/" + CONFIG_FILENAME);
 
             configInputStream = configFileLocation.openStream();
             InputStreamReader configInputStreamReader = new InputStreamReader(configInputStream);
@@ -252,6 +253,7 @@ public class Global {
                 }
             }
         } catch (Exception e) {
+            logger.error(e);
             setGlobalStatus("config file not found.");
         }
     }
