@@ -24,6 +24,7 @@ public class GraphicsEngine {
 	private Image offScreen;
 	private ImageObserver observer;
 	
+	//this are just references from global. we just declare them here to make reading faster
 	private int resolutionX;
 	private int resolutionY;
 	
@@ -42,6 +43,8 @@ public class GraphicsEngine {
 	private Camera savedCamera;
 	
     public GraphicsEngine(Component imageObserver){
+    	resetWindow();
+    	
     	this.resolutionX = Global.getGlobals().getGameResolutionX();
     	this.resolutionY = Global.getGlobals().getGameResolutionY();
     	
@@ -61,6 +64,8 @@ public class GraphicsEngine {
 		frameRateMeasure = System.currentTimeMillis();
 		frameRateNextSecond = frameRateMeasure + 1000;
 	}
+
+	
 
 	public void measureFrames() {
 		frameRateMeasure = System.currentTimeMillis();
@@ -175,8 +180,6 @@ public class GraphicsEngine {
 	}
 	
 	public void toggleFullScreen() {
-		int gameResolutionX = Global.getGlobals().getGameResolutionX();
-		int gameResolutionY = Global.getGlobals().getGameResolutionY();
 		int defaultWindowPositionX = Global.getGlobals().getDefaultWindowPositionX();
 		int defaultWindowPositionY = Global.getGlobals().getDefaultWindowPositionY();
 		
@@ -197,20 +200,28 @@ public class GraphicsEngine {
 		}
 		else
 		{
-			
-			//Set Fullscreen Off
-			Global.getGlobals().frameReference.setVisible(false);
-			Global.getGlobals().frameReference.dispose();
-			Global.getGlobals().frameReference.setUndecorated(false);
-			Global.getGlobals().frameReference.setLocation(defaultWindowPositionX,defaultWindowPositionY);
-			Global.getGlobals().frameReference.setSize(gameResolutionX+Global.WINDOW_THICKNESS_X,gameResolutionY+Global.WINDOW_THICKNESS_Y);
-			Global.getGlobals().frameReference.setVisible(true);
-			Global.getGlobals().frameReference.validate();
-			Global.getGlobals().frameReference.requestFocus();
-			Global.getGlobals().canvasReference.setLocation(0,0);
-			Global.getGlobals().canvasReference.requestFocus();
-			fullScreen=false;
+			resetWindow();
 		}
+	}
+	
+	public void resetWindow() {
+		int gameResolutionX = Global.getGlobals().getGameResolutionX();
+		int gameResolutionY = Global.getGlobals().getGameResolutionY();
+		int defaultWindowPositionX = Global.getGlobals().getDefaultWindowPositionX();
+		int defaultWindowPositionY = Global.getGlobals().getDefaultWindowPositionY();
+		
+		//Set Window on
+		Global.getGlobals().frameReference.setVisible(false);
+		Global.getGlobals().frameReference.dispose();
+		Global.getGlobals().frameReference.setUndecorated(false);
+		Global.getGlobals().frameReference.setLocation(defaultWindowPositionX,defaultWindowPositionY);
+		Global.getGlobals().frameReference.setSize(gameResolutionX+Global.WINDOW_THICKNESS_X,gameResolutionY+Global.WINDOW_THICKNESS_Y);
+		Global.getGlobals().frameReference.setVisible(true);
+		Global.getGlobals().frameReference.validate();
+		Global.getGlobals().frameReference.requestFocus();
+		Global.getGlobals().canvasReference.setLocation(0,0);
+		Global.getGlobals().canvasReference.requestFocus();
+		fullScreen=false;
 	}
 
 	public boolean isFullScreen() {
@@ -488,5 +499,7 @@ public class GraphicsEngine {
 
 		
 	}
+
+	
 
 }

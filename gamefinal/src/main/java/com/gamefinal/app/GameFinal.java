@@ -77,13 +77,11 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 		
 		mainFrame.setSize(new Dimension(resolutionX+Global.WINDOW_THICKNESS_X,resolutionY+Global.WINDOW_THICKNESS_Y));
 		mainFrame.setResizable(false);
-		
 		mainFrame.setLocation(windowPositionX, windowPositionY);
-		
 		mySelf.setSize(resolutionX, resolutionY);
-		
 		mainFrame.requestFocus();
 		mySelf.requestFocus();
+		
 	}
 
 

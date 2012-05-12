@@ -264,13 +264,13 @@ public class InputEngine {
 		private boolean recorderIsFull = false;
 		private int currentPlayBackPosition = 0;
 		private int savedPlayBackPosition = 0;
-		private static final int MAX_RECORDED_COMMANDS = 1000;
-		private InputEngineController inputRecord[] = new InputEngineController[MAX_RECORDED_COMMANDS];
+		private static final int RECORDER_BUFFER_SIZE = 5000;
+		private InputEngineController inputRecord[] = new InputEngineController[RECORDER_BUFFER_SIZE];
 		public RecorderState recorderState = RecorderState.OFF;
 		
 		
 		public InputRecorder(){
-			for(int line=0;line<MAX_RECORDED_COMMANDS;line++){
+			for(int line=0;line<RECORDER_BUFFER_SIZE;line++){
 				inputRecord[line] = new InputEngineController();
 			}
 		}
@@ -291,7 +291,7 @@ public class InputEngine {
 		}
 
 		private InputEngineController replay() {
-			if(currentPlayBackPosition==MAX_RECORDED_COMMANDS){
+			if(currentPlayBackPosition==RECORDER_BUFFER_SIZE){
 				//TODO here we can load but i think i will remove this in the future
 			}
 			currentPlayBackPosition--;
@@ -308,7 +308,7 @@ public class InputEngine {
 
 		private void addMessage(InputEngineController message){
 			
-			for(int a = MAX_RECORDED_COMMANDS-1;a>0;a--){
+			for(int a = RECORDER_BUFFER_SIZE-1;a>0;a--){
 				inputRecord[a]=inputRecord[a-1];
 			}
 			inputRecord[0]=message.clone();
@@ -318,10 +318,10 @@ public class InputEngine {
 			currentPlayBackPosition++;
 			savedPlayBackPosition = currentPlayBackPosition;
 			
-			if(currentPlayBackPosition>=MAX_RECORDED_COMMANDS-1){
+			if(currentPlayBackPosition>=RECORDER_BUFFER_SIZE-1){
 				recorderIsFull=true;
 				recorderState = RecorderState.OFF;
-				currentPlayBackPosition=MAX_RECORDED_COMMANDS-1;
+				currentPlayBackPosition=RECORDER_BUFFER_SIZE-1;
 			}
 		}
 

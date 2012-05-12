@@ -90,8 +90,6 @@ public class Global{
 		panelReference = mainPanel;
 		canvasReference = mainCanvas;
 		
-		
-		
 		setMapDefaultValues();
 		readConfig();
 		setDefaultWindowPosition();
@@ -277,6 +275,8 @@ public class Global{
 					
 				}
 			}
+			
+			logger.info("Found "+CONFIG_FILENAME+": Resolution: "+getGameResolutionX()+","+getGameResolutionY());
 		} catch (Exception e) {
 			setGlobalStatus("config file not found.");
 		}
