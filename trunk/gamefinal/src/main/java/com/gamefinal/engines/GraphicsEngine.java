@@ -275,6 +275,8 @@ public class GraphicsEngine {
 		private float finalCameraPositionX;
 		private float finalCameraPositionY;
 		
+		private GameObject cameraFollow;
+		
 		private Camera(){
 			cameraPositionX=0;
 			cameraPositionY=0;
@@ -426,10 +428,24 @@ public class GraphicsEngine {
 		}
 
 		private void updateCameraVelocity() {
-			updateCameraFriction();
-			cameraPositionX+=velocityX;
-			cameraPositionY+=velocityY;
-
+			if(cameraFollow==null) {
+				updateCameraFriction();
+				cameraPositionX+=velocityX;
+				cameraPositionY+=velocityY;
+			}
+			else
+			{
+				cameraPositionX=cameraFollow.getWorldPositionX();
+				cameraPositionY=cameraFollow.getWorldPositionY();
+			}
+		}
+		
+		public void setCameraToFollow(GameObject object) {
+			cameraFollow = object;
+		}
+		
+		public void freeCameraFollow() {
+			cameraFollow = null;
 		}
 
 		private void updateCameraFriction() {

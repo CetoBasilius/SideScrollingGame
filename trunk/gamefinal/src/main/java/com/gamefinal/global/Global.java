@@ -240,6 +240,8 @@ public class Global{
 			InputStreamReader configInputStreamReader = new InputStreamReader(configInputStream);
 			BufferedReader configBufferedReader = new BufferedReader(configInputStreamReader);
 			String currentReadingLine = null;
+			
+			logger.info("Found "+CONFIG_FILENAME);
 
 			while ((currentReadingLine = configBufferedReader.readLine()) != null) {	
 				String currentReadingLineSplit[] = currentReadingLine.split("=",-1);
@@ -249,34 +251,41 @@ public class Global{
 							.equalsIgnoreCase("resolutionx")) {
 						Global.getGlobals().setGameResolutionX(
 								Integer.parseInt(currentReadingLineSplit[1]));
+						logger.info("Resolution width: "+getGameResolutionX());
 					}
 					if (currentReadingLineSplit[0]
 							.equalsIgnoreCase("resolutiony")) {
 						Global.getGlobals().setGameResolutionY(
 								Integer.parseInt(currentReadingLineSplit[1]));
+						logger.info("Resolution height: "+getGameResolutionY());
 					}
 					if (currentReadingLineSplit[0].equalsIgnoreCase("mapsizex")) {
 						Global.getGlobals().setMapSizeX(
 								Integer.parseInt(currentReadingLineSplit[1]));
+						logger.info("Map width: "+mapSizeX);
 					}
 					if (currentReadingLineSplit[0].equalsIgnoreCase("mapsizey")) {
 						Global.getGlobals().setMapSizeY(
 								Integer.parseInt(currentReadingLineSplit[1]));
+						logger.info("Map height: "+mapSizeY);
 					}
 					if (currentReadingLineSplit[0].equalsIgnoreCase("mapfile")) {
 						Global.getGlobals().setMapFileName(
 								currentReadingLineSplit[1]);
+						logger.info("Map name: "+mapFileName);
 					}
 					if (currentReadingLineSplit[0]
 							.equalsIgnoreCase("imagelistfile")) {
 						Global.getGlobals().setImageListFileName(
 								currentReadingLineSplit[1]);
+						logger.info("Image list file: "+imageListFileName);
 					}
 					
 				}
 			}
 			
-			logger.info("Found "+CONFIG_FILENAME+": Resolution: "+getGameResolutionX()+","+getGameResolutionY());
+			
+			
 		} catch (Exception e) {
 			setGlobalStatus("config file not found.");
 		}

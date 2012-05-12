@@ -276,7 +276,6 @@ public class InputEngine {
 		}
 
 		public InputEngineController update(InputEngineController inputControllerIn) {
-			
 			if(recorderState==RecorderState.RECORDING){
 				this.addMessage(inputControllerIn);
 			}
