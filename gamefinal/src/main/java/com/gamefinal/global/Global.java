@@ -28,8 +28,8 @@ public class Global{
 	static final Logger logger = Logger.getLogger(Global.class);
 	public static final int CONSOLE_MARGIN = 20;
 	public static final String CONFIG_FILENAME = "config.txt";
-	public static final int DEFAULT_MAP_SIZE_Y = 256;
 	public static final int DEFAULT_MAP_SIZE_X = 512;
+	public static final int DEFAULT_MAP_SIZE_Y = 256;
 	public static final String DEFAULT_MAP_FILENAME = "out.txt";
 	public static final String DEFAULT_IMAGELIST_FILENAME = "imagelist.txt";
 	public static final int DEFAULT_GAME_RESOLUTION_Y = 480;
@@ -292,10 +292,11 @@ public class Global{
 	}
 	
 	public void setMapDefaultValues() {
+		//TODO resolution doesnt go here
 		setGameResolutionX(DEFAULT_GAME_RESOLUTION_X);
 		setGameResolutionY(DEFAULT_GAME_RESOLUTION_Y);
-		setMapFileName(DEFAULT_MAP_FILENAME);
 		
+		setMapFileName(DEFAULT_MAP_FILENAME);
 		setMapSizeX(DEFAULT_MAP_SIZE_X);
 		setMapSizeY(DEFAULT_MAP_SIZE_Y);
 	}
