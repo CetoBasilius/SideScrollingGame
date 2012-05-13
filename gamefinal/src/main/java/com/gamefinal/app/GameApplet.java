@@ -3,8 +3,11 @@ package com.gamefinal.app;
 import java.applet.Applet;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 public class GameApplet extends Applet {
@@ -18,6 +21,7 @@ public class GameApplet extends Applet {
 	private GameFinal game;
 	private JButton launchGameButton;
 	private JLabel launchGameStatus;
+	private JFrame gameFrame;
 
 	@Override
 	public void init() {
@@ -28,10 +32,21 @@ public class GameApplet extends Applet {
             public void actionPerformed(ActionEvent e) {
             	if(game==null) {
             		game = new GameFinal();
+            		gameFrame = (JFrame) game.getParent().getParent().getParent().getParent().getParent();
+            		gameFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            		
+            		gameFrame.addWindowListener(new WindowAdapter() {
+                         public void windowClosing(WindowEvent e) {
+                                init();
+                         }
+            		});
+
+            		
             		launchGameStatus.setText("Game launched.");
             	}
             	else
             	{
+            		gameFrame.setVisible(true);
             		launchGameStatus.setText("Game is already running!");
             	}
             }
