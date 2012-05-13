@@ -33,6 +33,19 @@ public class InputEngine {
 			if(inputController.holdingRightKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(16);}
 			if(inputController.holdingLeftKey){Global.getGlobals().graphicsEngine.gameCamera.moveCameraHorizontal(-16);}*/
 
+			//-------------------------------THIS IS ENTIRELY EXPERIMENTAL--------------------------------------------------
+			if(pressedActionKey()) {
+				Global.getGlobals().worldMap.mapTiles[2][152][69].setObjectResting(false);
+				Global.getGlobals().graphicsEngine.gameCamera.setCameraToFollow(Global.getGlobals().worldMap.mapTiles[2][152][69]);
+			}
+			
+			if(isHoldingUpKey() && isHoldingJumpKey()){Global.getGlobals().worldMap.mapTiles[2][152][69].addVelocityY(1.0f);}
+			if(isHoldingDownKey() && isHoldingJumpKey()){Global.getGlobals().worldMap.mapTiles[2][152][69].addVelocityY(-1.0f);}
+			if(isHoldingRightKey() && isHoldingJumpKey()){Global.getGlobals().worldMap.mapTiles[2][152][69].addVelocityX(1.0f);}
+			if(isHoldingLeftKey() && isHoldingJumpKey()){Global.getGlobals().worldMap.mapTiles[2][152][69].addVelocityX(-1.0f);}	
+			if(pressedReloadKey()) {Global.getGlobals().graphicsEngine.gameCamera.freeCameraFollow();}
+			
+			//--------------------------------------------------------------------------------------------------------------
 
 			if(isHoldingUpKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(1.0f);}
 			if(isHoldingDownKey()){Global.getGlobals().graphicsEngine.gameCamera.addVelocityY(-1.0f);}

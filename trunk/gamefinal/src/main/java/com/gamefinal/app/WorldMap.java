@@ -19,12 +19,12 @@ public class WorldMap {
 	public Color[] mapLevelColor = {Color.green,Color.pink,Color.red,Color.yellow};
 
 	private String mapName;
-	private int mapLenght = 512;//384
-	private int mapHeight = 256;//144
+	private int mapLenght = 512;
+	private int mapHeight = 256;
 	
-	public String mapString[][][] = new String[maxMapLevels][getMapHeight()][getMapLenght()];//Back1/back2/Normal/Front
-	public String collisionMapString[][] = new String[getMapHeight()][getMapLenght()];//collision
-	public Tile mapTiles[][][] = new Tile[maxMapLevels][getMapHeight()][getMapLenght()];
+	public String mapString[][][] = new String[maxMapLevels][mapLenght][mapHeight];//Back1/back2/Normal/Front
+	public String collisionMapString[][] = new String[mapLenght][mapHeight];//collision
+	public Tile mapTiles[][][] = new Tile[maxMapLevels][mapLenght][mapHeight];
 
 	public WorldMap(int mapSizeX,int mapSizeY,String inMapName){
 		setMapLenght(mapSizeX);
@@ -65,21 +65,24 @@ public class WorldMap {
 			String currentReadingLine = null;
 			boolean readingCollision = false;
 
+			//Reads down the document
 			while ((currentReadingLine = mapBufferedReader.readLine()) != null) {
 
 				String currentReadingLineSplit[] = currentReadingLine.split(",", -1);
 
-				for (int a = 0; a < mapLenght; a++) {
+				for (int mapLenghtXIndex = 0; mapLenghtXIndex < mapLenght; mapLenghtXIndex++) {
 					if (readingCollision == false) {
-						if (currentReadingLineSplit.length > 1 && a < currentReadingLineSplit.length) {
-							mapString[CurrentReadingLevel][CurrentLineNum][a] = currentReadingLineSplit[a];
+						if (currentReadingLineSplit.length > 1 && mapLenghtXIndex < currentReadingLineSplit.length) {
+							mapString[CurrentReadingLevel][mapLenghtXIndex][CurrentLineNum] = currentReadingLineSplit[mapLenghtXIndex];
 						}
 					} else {
-						if (currentReadingLineSplit.length > 1 && a < currentReadingLineSplit.length) {
-							collisionMapString[CurrentLineNum][a] = currentReadingLineSplit[a];
+						if (currentReadingLineSplit.length > 1 && mapLenghtXIndex < currentReadingLineSplit.length) {
+							collisionMapString[mapLenghtXIndex][CurrentLineNum] = currentReadingLineSplit[mapLenghtXIndex];
 						}
 					}
+					
 				}
+				
 				CurrentLineNum++;
 
 				if (CurrentLineNum == mapHeight || currentReadingLine.equals("")) {
@@ -116,16 +119,16 @@ public class WorldMap {
 
 	private void initTile(int mapLevel, int mapX, int mapY) {
 
-		mapTiles[mapLevel][mapY][mapX] = new Tile();
-		mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
+		mapTiles[mapLevel][mapX][mapY] = new Tile();
+		mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
 		
 		Image[] globalTileImages = Global.getGlobals().tileImages;
 		Image[] globalTriangleTileImages = Global.getGlobals().triangleTileImages;
 		
-		String tileString = mapString[mapLevel][mapY][mapX];
+		String tileString = mapString[mapLevel][mapX][mapY];
 		//TODO finish and optimize this algorithm 
 		
-		mapTiles[mapLevel][mapY][mapX] = new Tile();
+		mapTiles[mapLevel][mapX][mapY] = new Tile();
 		
 		//Tile image index can go from 1 to globalTileImages.lenght, index 0 = no texture
 		if (tileString.matches("^[0-9-<>]+$"))// a-zA-Z([0-9\,\.\+\-]+)
@@ -171,15 +174,15 @@ public class WorldMap {
 					if (globalTileImages[tileImageIndex] != null) {
 						if (tileIsTriangleTile == false) {
 							//Normal tile
-							mapTiles[mapLevel][mapY][mapX] = new Tile(globalTileImages[tileImageIndex]);
-							mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
-							mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
+							mapTiles[mapLevel][mapX][mapY] = new Tile(globalTileImages[tileImageIndex]);
+							mapTiles[mapLevel][mapX][mapY].setInvertedXFlag(negativeFlag);
+							mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
 
 						} else {
 							//Triangle tile
-							mapTiles[mapLevel][mapY][mapX] = new Tile(globalTriangleTileImages[tileImageIndex]);
-							mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
-							mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
+							mapTiles[mapLevel][mapX][mapY] = new Tile(globalTriangleTileImages[tileImageIndex]);
+							mapTiles[mapLevel][mapX][mapY].setInvertedXFlag(negativeFlag);
+							mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
 							
 						}
 					}
@@ -201,16 +204,16 @@ public class WorldMap {
 							{
 
 								//Normal tile
-								mapTiles[mapLevel][mapY][mapX] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
+								mapTiles[mapLevel][mapX][mapY] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
 								//mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
-								mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
+								mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
 
 							}
 						}
 					}
 					else
 					{
-						mapTiles[mapLevel][mapY][mapX] = new Tile();
+						mapTiles[mapLevel][mapX][mapY] = new Tile();
 					}
 				}
 			}
@@ -225,18 +228,15 @@ public class WorldMap {
 						{
 							if(globalAnimatedTileImages[numberAnimatedEffect][0]!=null)
 							{
-
 								//Normal tile
-								mapTiles[mapLevel][mapY][mapX] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
-								//mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
-								mapTiles[mapLevel][mapY][mapX].setWorldPosition(mapY*TILE_SPACING,mapX*TILE_SPACING);
-
+								mapTiles[mapLevel][mapX][mapY] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
+								mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
 							}
 						}
 					}
 					else
 					{
-						mapTiles[mapLevel][mapY][mapX] = new Tile();
+						mapTiles[mapLevel][mapX][mapY] = new Tile();
 					}
 				}
 			}

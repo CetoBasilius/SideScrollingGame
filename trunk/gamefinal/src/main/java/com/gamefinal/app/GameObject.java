@@ -104,7 +104,7 @@ public class GameObject {
 		this.worldPositionY = worldPositionY;
 	}
 	
-	public void setWorldPosition(int worldPositionY,int worldPositionX) {
+	public void setWorldPosition(int worldPositionX,int worldPositionY) {
 		this.worldPositionX = worldPositionX;
 		this.worldPositionY = worldPositionY;
 	}

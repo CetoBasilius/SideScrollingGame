@@ -248,8 +248,8 @@ public class GraphicsEngine {
 	public class Camera implements Cloneable{
 		
 		private static final int CAMERA_CENTER_CROSSHAIR_SIZE = 20;
-		private static final int Y_MAP_STRING_OFFSET = 18;
-		private static final int X_MAP_STRING_OFFSET = 12;
+		private static final int Y_MAP_STRING_OFFSET = 10;
+		private static final int X_MAP_STRING_OFFSET = 6;
 		public int TILE_SPACING = 32;
 		
 		private static final float MAX_CAMERA_VELOCITY = 64;
@@ -336,6 +336,10 @@ public class GraphicsEngine {
 		private void showCameraPosition() {
 			bufferGraphics.setColor(Color.white);
 			bufferGraphics.drawString("Camera Position: "+this.getPositionX()+","+this.getPositionY(), 10,resolutionY-40);
+			
+			int aproximateCameraOverTileX = (int)(this.getPositionX()/TILE_SPACING);
+			int aproximateCameraOverTileY = -(int)(this.getPositionY()/TILE_SPACING);
+			bufferGraphics.drawString("Camera over tile: "+aproximateCameraOverTileX+","+aproximateCameraOverTileY,10,resolutionY-60);
 		}
 
 		private void showFramesPerSecond() {
@@ -351,8 +355,8 @@ public class GraphicsEngine {
 		
 		
 		public void drawGameObjectBounds(GameObject object){
-			bufferGraphics.fillRect((int)(object.getWorldPositionX() - finalCameraPositionX),(int)(object.getWorldPositionY() + finalCameraPositionY),3,3);
-			bufferGraphics.drawRect((int)(object.getWorldPositionX() - finalCameraPositionX),(int)(object.getWorldPositionY() + finalCameraPositionY), object.getSizeX(), object.getSizeY());
+			bufferGraphics.fillRect((int)(object.getWorldPositionX() - finalCameraPositionX),(int)(finalCameraPositionY - object.getWorldPositionY()),3,3);
+			bufferGraphics.drawRect((int)(object.getWorldPositionX() - finalCameraPositionX),(int)(finalCameraPositionY - object.getWorldPositionY()), object.getSizeX(), object.getSizeY());
 		}
 
 		private void optimizeMapDrawingX() {
@@ -382,7 +386,7 @@ public class GraphicsEngine {
 		public void drawTile(int positionX, int positionY, Tile tile) {
 			tile.update();
 			if(tile.tileHasImage()){
-				bufferGraphics.drawImage(tile.getTileImage(), positionX+tile.getOffsetX(), positionY+tile.getOffsetY(),tile.getVisualX(),tile.getVisualY(), observer);
+				bufferGraphics.drawImage(tile.getTileImage(), positionX+tile.getOffsetX(), positionY+tile.getOffsetY(),tile.getVisualSizeX(),tile.getVisualSizeY(), observer);
 			}
 			
 	    }
@@ -391,9 +395,10 @@ public class GraphicsEngine {
 			optimizeMapDrawing();
 			bufferGraphics.setFont(debugFont);
 			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapTiles.length;mapLevel++){
-				for (int mapYIndex = nearestTileY; mapYIndex < farthestTileY; mapYIndex++) {
-					for (int mapXIndex = nearestTileX; mapXIndex < farthestTileX; mapXIndex++) {
-						drawTile((int)((mapXIndex*TILE_SPACING) - finalCameraPositionX), (int)((mapYIndex*TILE_SPACING) + finalCameraPositionY),Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex]);
+				for (int mapXIndex = nearestTileX; mapXIndex < farthestTileX; mapXIndex++) {
+					for (int mapYIndex = nearestTileY; mapYIndex < farthestTileY; mapYIndex++) {
+						Tile tile = Global.getGlobals().worldMap.mapTiles[mapLevel][mapXIndex][mapYIndex];
+						drawTile((int)((tile.getWorldPositionX()) - finalCameraPositionX), (int)(finalCameraPositionY - (tile.getWorldPositionY())),tile);
 					}
 				}
 			}
@@ -403,15 +408,23 @@ public class GraphicsEngine {
 		private void renderMapDebug(){
 			bufferGraphics.setFont(debugFont);
 			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapString.length;mapLevel++){
-				for (int mapYIndex = nearestTileY; mapYIndex < farthestTileY; mapYIndex++) {
-					for (int mapXIndex = nearestTileX; mapXIndex < farthestTileX; mapXIndex++) {
-						drawGameObjectBounds(Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex]);
-						bufferGraphics.setColor(Global.getGlobals().worldMap.mapLevelColor[mapLevel]);
-						if (!Global.getGlobals().worldMap.mapString[mapLevel][mapYIndex][mapXIndex].equals("")) {
+				for (int mapXIndex = nearestTileX; mapXIndex < farthestTileX; mapXIndex++) {
+					for (int mapYIndex = nearestTileY; mapYIndex < farthestTileY; mapYIndex++) {
 
-							bufferGraphics.drawString(Global.getGlobals().worldMap.mapString[mapLevel][mapYIndex][mapXIndex]+","+
-									Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex].getMaxFrames()+","+
-									Global.getGlobals().worldMap.mapTiles[mapLevel][mapYIndex][mapXIndex].getCurrentFrame(), X_MAP_STRING_OFFSET + (int)((mapXIndex * TILE_SPACING) - finalCameraPositionX), Y_MAP_STRING_OFFSET + (int)((mapYIndex * TILE_SPACING) + finalCameraPositionY));
+						drawGameObjectBounds(Global.getGlobals().worldMap.mapTiles[mapLevel][mapXIndex][mapYIndex]);
+						bufferGraphics.setColor(Global.getGlobals().worldMap.mapLevelColor[mapLevel]);
+						
+						Tile tile = Global.getGlobals().worldMap.mapTiles[mapLevel][mapXIndex][mapYIndex];
+						
+						if (!Global.getGlobals().worldMap.mapString[mapLevel][mapXIndex][mapYIndex].equals("")) {
+
+							bufferGraphics.drawString(Global.getGlobals().worldMap.mapString[mapLevel][mapXIndex][mapYIndex]+","+
+									tile.getMaxFrames()+","+
+									tile.getCurrentFrame(), X_MAP_STRING_OFFSET + (int)((tile.getWorldPositionX()) - finalCameraPositionX), Y_MAP_STRING_OFFSET + (int)(finalCameraPositionY - (tile.getWorldPositionY())));
+
+							bufferGraphics.drawString(
+									tile.getWorldPositionX()+","+
+									tile.getWorldPositionY(), X_MAP_STRING_OFFSET + (int)((tile.getWorldPositionX()) - finalCameraPositionX), Y_MAP_STRING_OFFSET*2 + (int)(finalCameraPositionY - (tile.getWorldPositionY()) ));
 
 						}
 					}

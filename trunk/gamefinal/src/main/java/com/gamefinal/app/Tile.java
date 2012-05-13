@@ -105,11 +105,11 @@ public class Tile extends GameObject {
 		}
 	}
 
-	public int getVisualY() {
+	public int getVisualSizeY() {
 		return getSizeY()*invertedYFlag;
 	}
 	
-	public int getVisualX() {
+	public int getVisualSizeX() {
 		return getSizeX()*invertedXFlag;
 	}
 
