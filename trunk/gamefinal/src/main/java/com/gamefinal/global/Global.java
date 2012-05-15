@@ -20,6 +20,7 @@ import com.gamefinal.app.WorldMap;
 import com.gamefinal.engines.CollisionEngine;
 import com.gamefinal.engines.GraphicsEngine;
 import com.gamefinal.engines.InputEngine;
+import com.gamefinal.engines.SoundEngine;
 import com.gamefinal.helpers.NumberHelper;
 import com.gamefinal.helpers.StringHelper;
 
@@ -31,7 +32,7 @@ public class Global{
 	public static final int DEFAULT_MAP_SIZE_X = 512;
 	public static final int DEFAULT_MAP_SIZE_Y = 256;
 	public static final String DEFAULT_MAP_FILENAME = "out.txt";
-	public static final String DEFAULT_IMAGELIST_FILENAME = "imagelist.txt";
+	public static final String DEFAULT_RESOURCELIST_FILENAME = "resourcelist.txt";
 	public static final int DEFAULT_GAME_RESOLUTION_Y = 480;
 	public static final int DEFAULT_GAME_RESOLUTION_X = 640;
 	
@@ -53,7 +54,8 @@ public class Global{
 	public Image triangleTileImages[];
 	public Image animatedTileImages[][];
 	
-	private String imageListFileName = DEFAULT_IMAGELIST_FILENAME;
+	private String resourceListFileName = DEFAULT_RESOURCELIST_FILENAME;
+	public URL soundFileNames[];
 	public String tileImagesFileNames[];
 	public String animatedTileImagesFileNames[][];
 	
@@ -71,6 +73,7 @@ public class Global{
 	public GraphicsEngine graphicsEngine;
 	public CollisionEngine collisionEngine;
 	public InputEngine inputEngine;
+	public SoundEngine soundEngine;
 	
 	public Console gameConsole;
 	
@@ -80,6 +83,7 @@ public class Global{
 	
 	private int defaultWindowPositionX;
 	private int defaultWindowPositionY;
+	
 	
 	private Global(){
 		
@@ -93,13 +97,15 @@ public class Global{
 		setMapDefaultValues();
 		readConfig();
 		setDefaultWindowPosition();
-		readImageList();
+		readResourceList();
 		initWorldMap();
 		loadGlobalResources(mainFrame);
 
 		graphicsEngine = new GraphicsEngine(mainFrame);
 		collisionEngine = new CollisionEngine();
 		inputEngine = new InputEngine();
+		soundEngine = new SoundEngine();
+		
 		gameConsole = new Console(CONSOLE_MARGIN,gameHalfResoulutionY,CONSOLE_MARGIN,gameResolutionY-CONSOLE_MARGIN);
 	}
 
@@ -151,8 +157,9 @@ public class Global{
 		loadGlobalResourcesThread.start();
 	}
 	
-	private void readImageList()
+	private void readResourceList()
 	{
+		Vector<URL> soundFileNamesVector = new Vector<URL>();
 		Vector<String> tileFileNamesVector = new Vector<String>();
 		Vector<Vector<String>> animatedTileFileNamesVector = new Vector<Vector<String>>();
 		
@@ -162,7 +169,7 @@ public class Global{
 		int maxAnimatedTileFrames=0;
 		try {
 			InputStream imageFileInputStream;
-			URL imageFileFileLocation = getClass().getResource(CONFIGURATION_FOLDER+imageListFileName);
+			URL imageFileFileLocation = getClass().getResource(CONFIGURATION_FOLDER+resourceListFileName);
 			setGlobalStatus("Loading file at "+imageFileFileLocation.getPath());
 			imageFileInputStream = imageFileFileLocation.openStream();
 			InputStreamReader imageFileInputStreamReader = new InputStreamReader(imageFileInputStream);
@@ -176,6 +183,10 @@ public class Global{
 
 					if(currentReadingLineSplit[0].equalsIgnoreCase("tile")){
 						tileFileNamesVector.add(currentReadingLineSplit[1]);
+					}
+					
+					if(currentReadingLineSplit[0].equalsIgnoreCase("sound")){
+						soundFileNamesVector.add(new URL(currentReadingLineSplit[1]));
 					}
 					
 					if(currentReadingLineSplit[0].equalsIgnoreCase("animatedtile")){
@@ -205,7 +216,13 @@ public class Global{
 				}
 			}
 		} catch (Exception e) {
-			setGlobalStatus("Tile list file not found.");
+			setGlobalStatus("resource list file not found.");
+		}
+		
+		int soundVectorSize = tileFileNamesVector.size();
+		if(soundVectorSize>0){
+			soundFileNames = new URL[soundVectorSize];
+			soundFileNamesVector.toArray(soundFileNames); 
 		}
 
 		int tileVectorSize = tileFileNamesVector.size();
@@ -280,10 +297,10 @@ public class Global{
 						logger.info("Map name: "+mapFileName);
 					}
 					if (currentReadingLineSplit[0]
-							.equalsIgnoreCase("imagelistfile")) {
-						Global.getGlobals().setImageListFileName(
+							.equalsIgnoreCase("resourcelistfile")) {
+						Global.getGlobals().setResourceListFileName(
 								currentReadingLineSplit[1]);
-						logger.info("Image list file: "+imageListFileName);
+						logger.info("Resource list file: "+resourceListFileName);
 					}
 					
 				}
@@ -390,12 +407,12 @@ public class Global{
 		setGlobalStatus("Loading is done.");
 	}
 
-	public String getImageListFileName() {
-		return imageListFileName;
+	public String getResourceListFileName() {
+		return resourceListFileName;
 	}
 
-	public void setImageListFileName(String tileListFileName) {
-		this.imageListFileName = tileListFileName;
+	public void setResourceListFileName(String tileListFileName) {
+		this.resourceListFileName = tileListFileName;
 	}
 
 	public String getMapFileName() {

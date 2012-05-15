@@ -16,8 +16,6 @@ public class Player extends GameObject{
 	Image legsWalking[];
 	Image legsWalkingCrouched[];
 	
-	
-	
 	public Player() {
 		super();
 	}
