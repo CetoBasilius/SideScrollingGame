@@ -275,6 +275,8 @@ public class GraphicsEngine {
 		private float finalCameraPositionX;
 		private float finalCameraPositionY;
 		
+		private boolean mapRenderOptimized = true;
+		
 		private GameObject cameraFollow;
 		
 		private Camera(){
@@ -291,9 +293,19 @@ public class GraphicsEngine {
 
 			renderMap();
 			
+			
 			if(graphicsDebug){showGraphicsDebugInfo();}
 			showFramesPerSecond();
 			renderConsole();
+		}
+
+		private void renderMap() {
+			if(isMapRenderOptimized()) {
+				renderMapOptimizedByArray();
+			}else {
+				renderMapByPosition();
+			}
+			
 		}
 
 		private void showGraphicsDebugInfo() {
@@ -358,6 +370,15 @@ public class GraphicsEngine {
 			bufferGraphics.fillRect((int)(object.getWorldPositionX() - finalCameraPositionX),(int)(finalCameraPositionY - object.getWorldPositionY()),3,3);
 			bufferGraphics.drawRect((int)(object.getWorldPositionX() - finalCameraPositionX),(int)(finalCameraPositionY - object.getWorldPositionY()), object.getSizeX(), object.getSizeY());
 		}
+		
+		public boolean isGameObjectOnCameraView(GameObject object){
+			if(((this.cameraPositionX-Global.getGlobals().getGameHalfResoulutionX())<object.getWorldPositionX())&&(object.getWorldPositionX()<(this.cameraPositionX+Global.getGlobals().getGameHalfResoulutionX()))){
+				if(((this.cameraPositionY-Global.getGlobals().getGameHalfResoulutionY())<object.getWorldPositionY())&&(object.getWorldPositionY()<(this.cameraPositionY+Global.getGlobals().getGameHalfResoulutionY()))){
+					return true;
+				}
+			}
+			return false;
+		}
 
 		private void optimizeMapDrawingX() {
 			//View Optimization X
@@ -391,7 +412,24 @@ public class GraphicsEngine {
 			
 	    }
 		
-		private void renderMap(){
+		private void renderMapByPosition() {
+			bufferGraphics.setFont(debugFont);
+			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapTiles.length;mapLevel++){
+				for (int mapXIndex = 0; mapXIndex < 512; mapXIndex++) {
+					for (int mapYIndex = 0; mapYIndex < 256; mapYIndex++) {
+						Tile tile = Global.getGlobals().worldMap.mapTiles[mapLevel][mapXIndex][mapYIndex];
+						if(tile.tileHasImage()){
+							if(this.isGameObjectOnCameraView(tile)) {
+								drawTile((int)((tile.getWorldPositionX()) - finalCameraPositionX), (int)(finalCameraPositionY - (tile.getWorldPositionY())),tile);
+							}
+						}
+					}
+				}
+			}
+			bufferGraphics.setFont(guiFont);
+		}
+		
+		private void renderMapOptimizedByArray(){
 			optimizeMapDrawing();
 			bufferGraphics.setFont(debugFont);
 			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapTiles.length;mapLevel++){
@@ -455,6 +493,8 @@ public class GraphicsEngine {
 		
 		public void setCameraToFollow(GameObject object) {
 			cameraFollow = object;
+			velocityX=0;
+			velocityY=0;
 		}
 		
 		public void freeCameraFollow() {
@@ -515,14 +555,30 @@ public class GraphicsEngine {
 		}
 
 		public void addVelocityX(float velocity){
-			if(Math.abs(this.velocityX)<MAX_CAMERA_VELOCITY){
-				this.velocityX+=velocity;
+			if(this.cameraFollow==null) {
+				if(Math.abs(this.velocityX)<MAX_CAMERA_VELOCITY){
+					this.velocityX+=velocity;
+				}
 			}
 		}
 
 		public void addVelocityY(float velocity){
-			if(Math.abs(this.velocityY)<MAX_CAMERA_VELOCITY){
-				this.velocityY+=velocity;
+			if(this.cameraFollow==null) {
+				if(Math.abs(this.velocityY)<MAX_CAMERA_VELOCITY){
+					this.velocityY+=velocity;
+				}
+			}
+		}
+
+		public boolean isMapRenderOptimized() {
+			return mapRenderOptimized;
+		}
+
+		public void toggleMapRender() {
+			if(mapRenderOptimized) {
+				mapRenderOptimized=false;
+			}else {
+				mapRenderOptimized=true;
 			}
 		}
 

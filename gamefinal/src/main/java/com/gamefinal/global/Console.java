@@ -163,4 +163,8 @@ public class Console {
 		this.inputLinePrefix = inputLinePrefix;
 	}
 
+	public void reMessageAgain() {
+		this.consoleInputLine = this.consoleLines[0];
+	}
+
 }

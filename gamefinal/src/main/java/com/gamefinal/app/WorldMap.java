@@ -118,128 +118,131 @@ public class WorldMap {
 	}
 
 	private void initTile(int mapLevel, int mapX, int mapY) {
-
-		mapTiles[mapLevel][mapX][mapY] = new Tile();
-		mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
-		
+	
 		Image[] globalTileImages = Global.getGlobals().tileImages;
 		Image[] globalTriangleTileImages = Global.getGlobals().triangleTileImages;
 		
 		String tileString = mapString[mapLevel][mapX][mapY];
-		//TODO finish and optimize this algorithm 
-		
-		mapTiles[mapLevel][mapX][mapY] = new Tile();
-		
-		//Tile image index can go from 1 to globalTileImages.lenght, index 0 = no texture
-		if (tileString.matches("^[0-9-<>]+$"))// a-zA-Z([0-9\,\.\+\-]+)
-		{
-			int negativeFlag = 1;
-            int tileImageIndex = 0;
-            boolean tileIsTriangleTile = false;
-            
-            //Tile does not contain < or > and can be negative
-			if (!(tileString.contains("<") || tileString.contains(">"))) {
-				//Convert String to int
-				tileImageIndex = Integer.parseInt(tileString);
-				//tileImageIndex is negative
-				if (tileImageIndex < 0){
-					//Convert to positive and store negative flag
-					tileImageIndex*=-1;
-					negativeFlag=-1;
-				}
-				
-				//Make sure there are tiles and that the index does not exceed that number
-				if(globalTileImages!=null){
-					if (tileImageIndex > globalTileImages.length) {
-						tileImageIndex=globalTileImages.length-1;
+
+		try {
+			//Tile image index can go from 1 to globalTileImages.lenght, index 0 = no texture
+			if (tileString.matches("^[0-9-<>]+$"))// a-zA-Z([0-9\,\.\+\-]+)
+			{
+				int negativeFlag = 1;
+				int tileImageIndex = 0;
+				boolean tileIsTriangleTile = false;
+
+
+				//Tile does not contain < or > and can be negative
+				if (!(tileString.contains("<") || tileString.contains(">"))) {
+					//Convert String to int
+					tileImageIndex = Integer.parseInt(tileString);
+					//tileImageIndex is negative
+					if (tileImageIndex < 0){
+						//Convert to positive and store negative flag
+						tileImageIndex*=-1;
+						negativeFlag=-1;
 					}
-				}  
-				
-			}else{
-				//Tile contains < or > and must not have -
-				//Grab the number after the first char
-				tileImageIndex = Integer.parseInt(tileString.substring(1));
-				tileIsTriangleTile = true;
-				//tile is an inverted slope.
-				if (tileString.contains(">")) {
-					negativeFlag=-1;
-				}
-			}
-			
-			if (tileImageIndex>0){
-				//Convert to array. image index 0 before this if is to have a blank tile
-				tileImageIndex--;
 
-				if(globalTileImages!=null){
-					if (globalTileImages[tileImageIndex] != null) {
-						if (tileIsTriangleTile == false) {
-							//Normal tile
-							mapTiles[mapLevel][mapX][mapY] = new Tile(globalTileImages[tileImageIndex]);
-							mapTiles[mapLevel][mapX][mapY].setInvertedXFlag(negativeFlag);
-							mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
-
-						} else {
-							//Triangle tile
-							mapTiles[mapLevel][mapX][mapY] = new Tile(globalTriangleTileImages[tileImageIndex]);
-							mapTiles[mapLevel][mapX][mapY].setInvertedXFlag(negativeFlag);
-							mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
-							
+					//Make sure there are tiles and that the index does not exceed that number
+					if(globalTileImages!=null){
+						if (tileImageIndex > globalTileImages.length) {
+							tileImageIndex=globalTileImages.length-1;
 						}
+					}  
+
+				}else{
+					//Tile contains < or > and must not have -
+					//Grab the number after the first char
+					tileImageIndex = Integer.parseInt(tileString.substring(1));
+					tileIsTriangleTile = true;
+					//tile is an inverted slope.
+					if (tileString.contains(">")) {
+						negativeFlag=-1;
 					}
 				}
-			}
-		}
-		//TODO load animated tiles
-		Image[][] globalAnimatedTileImages = Global.getGlobals().animatedTileImages;
-		
-		if(tileString.length()==3){
-			if(tileString.charAt(0)=='A'){
-				String numberAnimatedEffectString=tileString.substring(1);
-				if(numberAnimatedEffectString.matches("^[0-9-]+$")){
-					int numberAnimatedEffect=Integer.parseInt(numberAnimatedEffectString);
-					if(globalAnimatedTileImages!=null) {
-						if(numberAnimatedEffect<globalAnimatedTileImages.length)
-						{
-							if(globalAnimatedTileImages[numberAnimatedEffect][0]!=null)
-							{
 
+				if (tileImageIndex>0){
+					//Convert to array. image index 0 before this if is to have a blank tile
+					tileImageIndex--;
+
+					if(globalTileImages!=null){
+						if (globalTileImages[tileImageIndex] != null) {
+							if (tileIsTriangleTile == false) {
 								//Normal tile
-								mapTiles[mapLevel][mapX][mapY] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
-								//mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
+								mapTiles[mapLevel][mapX][mapY] = new Tile(globalTileImages[tileImageIndex]);
+								mapTiles[mapLevel][mapX][mapY].setInvertedXFlag(negativeFlag);
+								mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
+
+							} else {
+								//Triangle tile
+								mapTiles[mapLevel][mapX][mapY] = new Tile(globalTriangleTileImages[tileImageIndex]);
+								mapTiles[mapLevel][mapX][mapY].setInvertedXFlag(negativeFlag);
 								mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
 
 							}
 						}
 					}
-					else
-					{
-						mapTiles[mapLevel][mapX][mapY] = new Tile();
-					}
 				}
 			}
+			//TODO load animated tiles
+			Image[][] globalAnimatedTileImages = Global.getGlobals().animatedTileImages;
 
-			if(tileString.charAt(0)=='a'){
-				String numberAnimatedEffectString=tileString.substring(1);
-				if(numberAnimatedEffectString.matches("^[0-9-]+$")){
-					int numberAnimatedEffect=Integer.parseInt(numberAnimatedEffectString);
-					//logger.debug("animatedTileImages == null :"+ Global.getGlobals().animatedTileImages == null);
-					if(globalAnimatedTileImages!=null) {
-						if(numberAnimatedEffect< globalAnimatedTileImages.length)
-						{
-							if(globalAnimatedTileImages[numberAnimatedEffect][0]!=null)
+			if(tileString.length()==3){
+				if(tileString.charAt(0)=='A'){
+					String numberAnimatedEffectString=tileString.substring(1);
+					if(numberAnimatedEffectString.matches("^[0-9-]+$")){
+						int numberAnimatedEffect=Integer.parseInt(numberAnimatedEffectString);
+						if(globalAnimatedTileImages!=null) {
+							if(numberAnimatedEffect<globalAnimatedTileImages.length)
 							{
-								//Normal tile
-								mapTiles[mapLevel][mapX][mapY] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
-								mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
+								if(globalAnimatedTileImages[numberAnimatedEffect][0]!=null)
+								{
+
+									//Normal tile
+									mapTiles[mapLevel][mapX][mapY] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
+									//mapTiles[mapLevel][mapY][mapX].setInvertedXFlag(negativeFlag);
+									mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
+
+								}
 							}
 						}
+						else
+						{
+							mapTiles[mapLevel][mapX][mapY] = new Tile();
+						}
 					}
-					else
-					{
-						mapTiles[mapLevel][mapX][mapY] = new Tile();
+				}
+
+				if(tileString.charAt(0)=='a'){
+					String numberAnimatedEffectString=tileString.substring(1);
+					if(numberAnimatedEffectString.matches("^[0-9-]+$")){
+						int numberAnimatedEffect=Integer.parseInt(numberAnimatedEffectString);
+						//logger.debug("animatedTileImages == null :"+ Global.getGlobals().animatedTileImages == null);
+						if(globalAnimatedTileImages!=null) {
+							if(numberAnimatedEffect< globalAnimatedTileImages.length)
+							{
+								if(globalAnimatedTileImages[numberAnimatedEffect][0]!=null)
+								{
+									//Normal tile
+									mapTiles[mapLevel][mapX][mapY] = new Tile(globalAnimatedTileImages[numberAnimatedEffect]);
+									mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
+								}
+							}
+						}
+						else
+						{
+							mapTiles[mapLevel][mapX][mapY] = new Tile();
+						}
 					}
 				}
 			}
+		}catch(Exception e) {logger.error("map apears to be corrupt at position "+mapLevel+","+mapX+","+mapY);}
+
+		//if tile has not yet been created, create a blank tile.
+		if(mapTiles[mapLevel][mapX][mapY]==null) {
+			mapTiles[mapLevel][mapX][mapY] = new Tile();
+			mapTiles[mapLevel][mapX][mapY].setWorldPosition(mapX*TILE_SPACING,-mapY*TILE_SPACING);
 		}
 	}
 
