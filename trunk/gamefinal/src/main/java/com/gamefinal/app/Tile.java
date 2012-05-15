@@ -18,10 +18,14 @@ public class Tile extends GameObject {
 	private int invertedXFlag = 1;//1 not inverted,-1 inverted
 	private int invertedYFlag = 1;
 	
+	public Tile(){
+		checkImage();
+	}
+	
 	public Tile(Image setImage[]){
 		super();
 		tileImages = new Image[setImage.length];
-		tileImages = setImage.clone();
+		tileImages = setImage;
 		checkImage();
 	}
 	
@@ -53,9 +57,7 @@ public class Tile extends GameObject {
 		}
 	}
 	
-	public Tile(){
-		checkImage();
-	}
+	
 
 	public void update(){
 		super.update();

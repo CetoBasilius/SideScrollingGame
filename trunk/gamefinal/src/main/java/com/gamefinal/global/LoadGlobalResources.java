@@ -13,9 +13,7 @@ public class LoadGlobalResources extends Thread{
 	
 	private MediaTracker mediaTracker;
 	private int imageTrackerCount;
-	private Toolkit toolkit;
-	
-	
+	private Toolkit toolkit;	
 
 	LoadGlobalResources(Component component) {
 		toolkit = Toolkit.getDefaultToolkit();

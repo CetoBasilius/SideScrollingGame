@@ -1,7 +1,8 @@
 package com.gamefinal.app;
 
 public class GameObject {
-	private float friction = 0;
+	private float horizontalFriction = 0.0f;
+	private float verticalFriction = 0.0f;
 	
 	private int worldPositionX;
 	private int worldPositionY;
@@ -45,24 +46,24 @@ public class GameObject {
 
 	private void updateFrictionX() {
 		if(velocityX>0){
-			velocityX-=getFriction();
+			velocityX-=horizontalFriction;
 			if(velocityX<0){velocityX=0;}
 		}
 		
 		if(velocityX<0){
-			velocityX+=getFriction();
+			velocityX+=horizontalFriction;
 			if(velocityX>0){velocityX=0;}
 		}
 	}
 	
 	private void updateFrictionY() {
 		if(velocityY>0){
-			velocityY-=getFriction();
+			velocityY-=verticalFriction;
 			if(velocityY<0){velocityY=0;}
 		}
 		
 		if(velocityY<0){
-			velocityY+=getFriction();
+			velocityY+=verticalFriction;
 			if(velocityY>0){velocityY=0;}
 		}
 	}
@@ -136,20 +137,28 @@ public class GameObject {
 		this.velocityY = velocityY;
 	}
 
-	public float getFriction() {
-		return friction;
-	}
-
-	public void setFriction(float friction) {
-		this.friction = friction;
-	}
-
 	public boolean isObjectResting() {
 		return objectResting;
 	}
 
 	public void setObjectResting(boolean objectResting) {
 		this.objectResting = objectResting;
+	}
+
+	public float getHorizontalFriction() {
+		return horizontalFriction;
+	}
+
+	public void setHorizontalFriction(float horizontalFriction) {
+		this.horizontalFriction = horizontalFriction;
+	}
+
+	public float getVerticalFriction() {
+		return verticalFriction;
+	}
+
+	public void setVerticalFriction(float verticalFriction) {
+		this.verticalFriction = verticalFriction;
 	}
 
 }

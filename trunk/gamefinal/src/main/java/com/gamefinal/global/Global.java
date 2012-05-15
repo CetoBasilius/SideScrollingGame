@@ -138,6 +138,11 @@ public class Global{
 			return false;
 		}
 		
+		if(message.equalsIgnoreCase("togglemaprender")) {
+			graphicsEngine.gameCamera.toggleMapRender();
+			return false;
+		}
+		
 		return true;
 	}
 
