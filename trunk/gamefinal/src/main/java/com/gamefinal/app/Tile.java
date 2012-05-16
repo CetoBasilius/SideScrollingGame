@@ -37,7 +37,12 @@ public class Tile extends GameObject {
 	}
 
 	private void checkImage() {
-		if(tileImages!=null){
+		if(tileImages==null){
+			tileHasImage=false;
+		}
+		else
+		{
+			//object can be instatiated with an array full of null
 			if(tileImages[0]!=null){
 				setSize(tileImages[0].getWidth(null),tileImages[0].getHeight(null));
 				tileHasImage=true;
@@ -49,11 +54,6 @@ public class Tile extends GameObject {
 			{
 				tileHasImage=false;
 			}
-			
-		}
-		else
-		{
-			tileHasImage=false;
 		}
 	}
 	

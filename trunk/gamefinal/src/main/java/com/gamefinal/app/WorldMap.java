@@ -13,18 +13,21 @@ import com.gamefinal.global.Global;
 
 public class WorldMap {
     static final Logger logger = Logger.getLogger(WorldMap.class);
-	private static final int TILE_SPACING = 32;
-	public final int maxMapLevels = 4;
-	public enum mapLevel { BACK_BACK,BACK,MIDDLE,FRONT }
-	public Color[] mapLevelColor = {Color.green,Color.pink,Color.red,Color.yellow};
+	private static final int TILE_SPACING = 32;//this value controls the final resting position of the object
+	
+	public final int maxMapVisualLevels = 4;
+	public final Color[] mapLevelColor = {Color.green,Color.pink,Color.red,Color.yellow};
 
+	public enum mapLevel { BACK_BACK,BACK,MIDDLE,FRONT }
+	
 	private String mapName;
 	private int mapLenght = 512;
 	private int mapHeight = 256;
 	
-	public String mapString[][][] = new String[maxMapLevels][mapLenght][mapHeight];//Back1/back2/Normal/Front
-	public String collisionMapString[][] = new String[mapLenght][mapHeight];//collision
-	public Tile mapTiles[][][] = new Tile[maxMapLevels][mapLenght][mapHeight];
+	private String mapString[][][] = new String[maxMapVisualLevels][mapLenght][mapHeight];//Back1/back2/Normal/Front
+	private String collisionMapString[][] = new String[mapLenght][mapHeight];//collision
+	private Tile mapTiles[][][] = new Tile[maxMapVisualLevels][mapLenght][mapHeight];
+	
 
 	public WorldMap(int mapSizeX,int mapSizeY,String inMapName){
 		setMapLenght(mapSizeX);
@@ -108,7 +111,7 @@ public class WorldMap {
 	
 
 	private void initMapTiles() {
-		for(int mapLevel=0;mapLevel<maxMapLevels;mapLevel++){
+		for(int mapLevel=0;mapLevel<maxMapVisualLevels;mapLevel++){
 			for(int mapX=0;mapX<mapLenght;mapX++){
 				for(int mapY=0;mapY<mapHeight;mapY++){
 					initTile(mapLevel,mapX,mapY);
@@ -260,5 +263,17 @@ public class WorldMap {
 
 	private void setMapHeight(int mapHeight) {
 		this.mapHeight = mapHeight;
+	}
+	
+	public String getMapString(int level,int x,int y) {
+		return mapString[level][x][y];
+	}
+	
+	public Tile getMapTile(int level,int x,int y) {
+		return mapTiles[level][x][y];
+	}
+	
+	public String getCollisionMapString(int level,int x,int y) {
+		return collisionMapString[x][y];
 	}
 }

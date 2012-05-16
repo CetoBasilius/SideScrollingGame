@@ -250,6 +250,7 @@ public class GraphicsEngine {
 		private static final int CAMERA_CENTER_CROSSHAIR_SIZE = 20;
 		private static final int Y_MAP_STRING_OFFSET = 10;
 		private static final int X_MAP_STRING_OFFSET = 6;
+		
 		public int TILE_SPACING = 32;
 		
 		private static final float MAX_CAMERA_VELOCITY = 64;
@@ -260,8 +261,8 @@ public class GraphicsEngine {
 		private int cameraToleranceX;
 		private int cameraToleranceY;
 		
-		private float velocityX=0.0f;
-		private float velocityY=0.0f;
+		private float velocityX;
+		private float velocityY;
 		
 		private int nearestTileX;
 		private int farthestTileX;
@@ -372,9 +373,15 @@ public class GraphicsEngine {
 		}
 		
 		public boolean isGameObjectOnCameraView(GameObject object){
-			if(((this.cameraPositionX-Global.getGlobals().getGameHalfResoulutionX())<object.getWorldPositionX())&&(object.getWorldPositionX()<(this.cameraPositionX+Global.getGlobals().getGameHalfResoulutionX()))){
-				if(((this.cameraPositionY-Global.getGlobals().getGameHalfResoulutionY())<object.getWorldPositionY())&&(object.getWorldPositionY()<(this.cameraPositionY+Global.getGlobals().getGameHalfResoulutionY()))){
-					return true;
+			//Check if object position x is inside camera range x
+			if((this.cameraPositionX-Global.getGlobals().getGameHalfResoulutionX())<object.getWorldPositionX()){
+				if(object.getWorldPositionX()<(this.cameraPositionX+Global.getGlobals().getGameHalfResoulutionX())){
+					//now check object position y
+					if((this.cameraPositionY-Global.getGlobals().getGameHalfResoulutionY())<object.getWorldPositionY()){
+						if(object.getWorldPositionY()<(this.cameraPositionY+Global.getGlobals().getGameHalfResoulutionY())){
+							return true;
+						}
+					}
 				}
 			}
 			return false;
@@ -414,10 +421,10 @@ public class GraphicsEngine {
 		
 		private void renderMapByPosition() {
 			bufferGraphics.setFont(debugFont);
-			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapTiles.length;mapLevel++){
-				for (int mapXIndex = 0; mapXIndex < 512; mapXIndex++) {
-					for (int mapYIndex = 0; mapYIndex < 256; mapYIndex++) {
-						Tile tile = Global.getGlobals().worldMap.mapTiles[mapLevel][mapXIndex][mapYIndex];
+			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.maxMapVisualLevels;mapLevel++){
+				for (int mapXIndex = 0; mapXIndex < Global.getGlobals().worldMap.getMapLenght(); mapXIndex++) {
+					for (int mapYIndex = 0; mapYIndex < Global.getGlobals().worldMap.getMapHeight(); mapYIndex++) {
+						Tile tile = Global.getGlobals().worldMap.getMapTile(mapLevel,mapXIndex,mapYIndex);
 						if(tile.tileHasImage()){
 							if(this.isGameObjectOnCameraView(tile)) {
 								drawTile((int)((tile.getWorldPositionX()) - finalCameraPositionX), (int)(finalCameraPositionY - (tile.getWorldPositionY())),tile);
@@ -432,10 +439,10 @@ public class GraphicsEngine {
 		private void renderMapOptimizedByArray(){
 			optimizeMapDrawing();
 			bufferGraphics.setFont(debugFont);
-			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapTiles.length;mapLevel++){
+			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.maxMapVisualLevels;mapLevel++){
 				for (int mapXIndex = nearestTileX; mapXIndex < farthestTileX; mapXIndex++) {
 					for (int mapYIndex = nearestTileY; mapYIndex < farthestTileY; mapYIndex++) {
-						Tile tile = Global.getGlobals().worldMap.mapTiles[mapLevel][mapXIndex][mapYIndex];
+						Tile tile = Global.getGlobals().worldMap.getMapTile(mapLevel,mapXIndex,mapYIndex);
 						drawTile((int)((tile.getWorldPositionX()) - finalCameraPositionX), (int)(finalCameraPositionY - (tile.getWorldPositionY())),tile);
 					}
 				}
@@ -445,18 +452,18 @@ public class GraphicsEngine {
 		
 		private void renderMapDebug(){
 			bufferGraphics.setFont(debugFont);
-			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.mapString.length;mapLevel++){
+			for(int mapLevel=0;mapLevel<Global.getGlobals().worldMap.maxMapVisualLevels;mapLevel++){
 				for (int mapXIndex = nearestTileX; mapXIndex < farthestTileX; mapXIndex++) {
 					for (int mapYIndex = nearestTileY; mapYIndex < farthestTileY; mapYIndex++) {
 
-						drawGameObjectBounds(Global.getGlobals().worldMap.mapTiles[mapLevel][mapXIndex][mapYIndex]);
+						drawGameObjectBounds(Global.getGlobals().worldMap.getMapTile(mapLevel,mapXIndex,mapYIndex));
 						bufferGraphics.setColor(Global.getGlobals().worldMap.mapLevelColor[mapLevel]);
 						
-						Tile tile = Global.getGlobals().worldMap.mapTiles[mapLevel][mapXIndex][mapYIndex];
+						Tile tile = Global.getGlobals().worldMap.getMapTile(mapLevel,mapXIndex,mapYIndex);
 						
-						if (!Global.getGlobals().worldMap.mapString[mapLevel][mapXIndex][mapYIndex].equals("")) {
+						if (!Global.getGlobals().worldMap.getMapString(mapLevel,mapXIndex,mapYIndex).equals("")) {
 
-							bufferGraphics.drawString(Global.getGlobals().worldMap.mapString[mapLevel][mapXIndex][mapYIndex]+","+
+							bufferGraphics.drawString(Global.getGlobals().worldMap.getMapString(mapLevel,mapXIndex,mapYIndex).equals("")+","+
 									tile.getMaxFrames()+","+
 									tile.getCurrentFrame(), X_MAP_STRING_OFFSET + (int)((tile.getWorldPositionX()) - finalCameraPositionX), Y_MAP_STRING_OFFSET + (int)(finalCameraPositionY - (tile.getWorldPositionY())));
 

@@ -35,12 +35,12 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 	private Thread mainGameThread = null;
 	private boolean mainThreadSuspended = false;
 
-	GraphicsEnvironment graphicsEnvironment;
-	GraphicsDevice graphicsDevice;
+	private GraphicsEnvironment graphicsEnvironment;
+	private GraphicsDevice graphicsDevice;
 	
-	public JFrame mainFrame;
-	public JPanel mainPanel;
-	public Canvas mySelf;
+	private JFrame mainFrame;
+	private JPanel mainPanel;
+	private Canvas mySelf;
 	
 	public GameFinal(){
 		init();
@@ -52,6 +52,7 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
         PropertyConfigurator.configure(getClass().getResource("log4j.properties") );
 
+        
 		//Here all engines are initiated.
         //the parameters are the components of the window so that 
         //graphicsengine can switch between windowed and full screen mode

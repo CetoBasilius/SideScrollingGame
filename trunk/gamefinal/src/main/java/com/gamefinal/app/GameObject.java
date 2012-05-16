@@ -1,6 +1,9 @@
 package com.gamefinal.app;
 
 public class GameObject {
+	/*
+	 * This Class is used for every in-game object, it can be a player, a vehicle, a weapon, projectile and many things.
+	 */
 	private float horizontalFriction = 0.0f;
 	private float verticalFriction = 0.0f;
 	
