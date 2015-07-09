@@ -33,8 +33,8 @@ public class Global{
 	public static final int DEFAULT_MAP_SIZE_Y = 256;
 	public static final String DEFAULT_MAP_FILENAME = "out.txt";
 	public static final String DEFAULT_RESOURCELIST_FILENAME = "resourcelist.txt";
-	public static final int DEFAULT_GAME_RESOLUTION_Y = 480;
-	public static final int DEFAULT_GAME_RESOLUTION_X = 640;
+	public static final int DEFAULT_GAME_RESOLUTION_Y = 900;
+	public static final int DEFAULT_GAME_RESOLUTION_X = 1440;
 	
 	public static final int WINDOW_THICKNESS_X = 6;
 	public static final int WINDOW_THICKNESS_Y = 28;

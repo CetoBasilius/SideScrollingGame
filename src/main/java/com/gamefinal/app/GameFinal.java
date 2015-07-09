@@ -148,8 +148,9 @@ public class GameFinal extends Canvas implements MouseMotionListener, KeyListene
 
 		public void run(){
 			while(true){
-
-				repaint();
+				
+				//repaint(); // TODO this used to work
+				paint(GameFinal.this.getGraphics());
 
 				try {
 					Thread.sleep(PAINT_THREAD_SLEEP);

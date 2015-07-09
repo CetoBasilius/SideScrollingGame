@@ -294,7 +294,6 @@ public class GraphicsEngine {
 
 			renderMap();
 			
-			
 			if(graphicsDebug){showGraphicsDebugInfo();}
 			showFramesPerSecond();
 			renderConsole();
