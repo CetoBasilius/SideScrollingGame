@@ -52,7 +52,7 @@ public class ImageHelper {
             blue = raw[j] & 0x000000ff;
 
             if (alpha < 0) {
-                alpha = 254 - alpha;
+                alpha = 256 + alpha;
             }
 
             if (Counter2 >= ImageWidth) {
